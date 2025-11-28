@@ -35,6 +35,7 @@ export default function Customers() {
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedPlanId, setSelectedPlanId] = useState("");
   const [customerNumber, setCustomerNumber] = useState("");
+  const [amountPaid, setAmountPaid] = useState(0);
 
   useEffect(() => {
     if (currentUser) {
@@ -126,7 +127,9 @@ export default function Customers() {
         planId: selectedPlan ? selectedPlan.id : null,
         planName: selectedPlan ? selectedPlan.name : null,
         planPrice: selectedPlan ? selectedPlan.price : null,
-        customerNumber: Number(customerNumber)
+        customerNumber: Number(customerNumber),
+        amountPaid: Number(amountPaid) || 0,
+        remainingAmount: (selectedPlan ? selectedPlan.price : 0) - (Number(amountPaid) || 0)
       };
 
       if (editingCustomer) {
@@ -166,6 +169,7 @@ export default function Customers() {
       setStartDate(customer.startDate.toDate().toISOString().split('T')[0]);
       setSelectedPlanId(customer.planId || "");
       setCustomerNumber(customer.customerNumber || "");
+      setAmountPaid(customer.amountPaid || 0);
     } else {
       setEditingCustomer(null);
       setName("");
@@ -174,6 +178,7 @@ export default function Customers() {
       setSelectedPlanId("");
       const nextNum = await getNextCustomerNumber();
       setCustomerNumber(nextNum);
+      setAmountPaid(0);
     }
     setIsModalOpen(true);
   }
@@ -229,6 +234,9 @@ export default function Customers() {
                       शेवटची तारीख
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      पेमेंट
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       स्थिती
                     </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
@@ -262,6 +270,17 @@ export default function Customers() {
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {person.endDate.toDate().toLocaleDateString('mr-IN')}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm">
+                        <div className="flex flex-col">
+                          <span className="text-gray-900">₹{person.amountPaid || 0} / ₹{person.planPrice || 0}</span>
+                          {person.remainingAmount > 0 && (
+                            <span className="text-xs text-red-600">बाकी: ₹{person.remainingAmount}</span>
+                          )}
+                          {person.remainingAmount === 0 && person.planPrice > 0 && (
+                            <span className="text-xs text-green-600">पूर्ण भरलेले</span>
+                          )}
+                        </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
@@ -381,6 +400,27 @@ export default function Customers() {
                       onChange={(e) => setStartDate(e.target.value)}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
                     />
+                  </div>
+                  <div>
+                    <label htmlFor="amountPaid" className="block text-sm font-medium text-gray-700">
+                      आतापर्यंत भरलेली रक्कम (₹)
+                    </label>
+                    <input
+                      type="number"
+                      name="amountPaid"
+                      id="amountPaid"
+                      min="0"
+                      value={amountPaid}
+                      onChange={(e) => setAmountPaid(e.target.value)}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                      placeholder="0"
+                    />
+                    {selectedPlanId && plans.find(p => p.id === selectedPlanId) && (
+                      <p className="mt-1 text-xs text-gray-500">
+                        एकूण: ₹{plans.find(p => p.id === selectedPlanId).price} | 
+                        बाकी: ₹{(plans.find(p => p.id === selectedPlanId).price - (Number(amountPaid) || 0))}
+                      </p>
+                    )}
                   </div>
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                     <button
