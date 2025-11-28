@@ -2,31 +2,29 @@ rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
     
-    // Helper to check if the user is the owner of the data
-    function isOwner(messId) {
-      return request.auth != null && request.auth.uid == messId;
+    // Mess Owners collection - Public read (for PublicSearch to show mess name), owner can write
+    match /messOwners/{ownerId} {
+      allow read: if true; // Public read for displaying mess name to customers
+      allow write: if request.auth != null && request.auth.uid == ownerId;
     }
-
+    
+    // Customers collection - Public read (for PublicSearch), owner can create/update/delete
     match /customers/{customerId} {
-      // Allow public read for search functionality
-      allow read: if true;
-      
-      // Only owner can create, update, delete
-      allow create: if isOwner(request.resource.data.messId);
-      allow update, delete: if isOwner(resource.data.messId);
+      allow read: if true; // Public read for customer self-service search
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.messId;
+      allow update, delete: if request.auth != null && request.auth.uid == resource.data.messId;
     }
-
+    
+    // Attendance collection - Only the mess owner can access attendance
     match /attendance/{attendanceId} {
-      // Only owner can read/write attendance
-      allow read: if isOwner(resource.data.messId);
-      allow create: if isOwner(request.resource.data.messId);
-      allow update, delete: if isOwner(resource.data.messId);
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.messId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.messId;
     }
-
+    
+    // Plans collection - Only the mess owner can access their plans
     match /plans/{planId} {
-      allow read: if isOwner(resource.data.messId);
-      allow create: if isOwner(request.resource.data.messId);
-      allow update, delete: if isOwner(resource.data.messId);
+      allow read, write: if request.auth != null && request.auth.uid == resource.data.messId;
+      allow create: if request.auth != null && request.auth.uid == request.resource.data.messId;
     }
   }
 }

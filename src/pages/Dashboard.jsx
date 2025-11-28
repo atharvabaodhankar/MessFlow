@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import Layout from "../components/Layout";
 import { db } from "../firebase";
-import { collection, query, where, getCountFromServer } from "firebase/firestore";
+import { collection, query, where, getCountFromServer, doc, getDoc } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
 import { UsersIcon, QrCodeIcon, ClockIcon } from "@heroicons/react/24/outline";
 
@@ -13,12 +13,26 @@ export default function Dashboard() {
     expiringSoon: 0
   });
   const [loading, setLoading] = useState(true);
+  const [messName, setMessName] = useState("");
 
   useEffect(() => {
     if (currentUser) {
+      fetchMessName();
       fetchStats();
     }
   }, [currentUser]);
+
+  async function fetchMessName() {
+    try {
+      const messOwnerRef = doc(db, "messOwners", currentUser.uid);
+      const messOwnerSnap = await getDoc(messOwnerRef);
+      if (messOwnerSnap.exists()) {
+        setMessName(messOwnerSnap.data().messName || "");
+      }
+    } catch (error) {
+      console.error("Error fetching mess name:", error);
+    }
+  }
 
   async function fetchStats() {
     try {
@@ -86,7 +100,7 @@ export default function Dashboard() {
   return (
     <Layout>
       <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">डॅशबोर्ड</h1>
+        <h1 className="text-3xl font-bold text-gray-900">{messName || "मेसफ्लो"}</h1>
         <p className="mt-2 text-sm text-gray-600">
           तुमच्या मेसचा आजचा आढावा
         </p>

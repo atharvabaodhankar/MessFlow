@@ -1,11 +1,12 @@
 import React, { useState } from "react";
 import { db } from "../firebase";
-import { collection, query, where, getDocs } from "firebase/firestore";
+import { collection, query, where, getDocs, doc, getDoc } from "firebase/firestore";
 import { Link } from "react-router-dom";
 
 export default function PublicSearch() {
   const [mobile, setMobile] = useState("");
   const [customer, setCustomer] = useState(null);
+  const [messName, setMessName] = useState("");
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
@@ -14,6 +15,7 @@ export default function PublicSearch() {
     setLoading(true);
     setError("");
     setCustomer(null);
+    setMessName("");
 
     try {
       const q = query(collection(db, "customers"), where("mobile", "==", mobile));
@@ -23,8 +25,18 @@ export default function PublicSearch() {
         setError("ग्राहक सापडला नाही. कृपया मोबाईल नंबर तपासा.");
       } else {
         // Assuming mobile is unique or taking the first match
-        const doc = querySnapshot.docs[0];
-        setCustomer({ id: doc.id, ...doc.data() });
+        const docData = querySnapshot.docs[0];
+        const customerData = { id: docData.id, ...docData.data() };
+        setCustomer(customerData);
+        
+        // Fetch mess name
+        if (customerData.messId) {
+          const messOwnerRef = doc(db, "messOwners", customerData.messId);
+          const messOwnerSnap = await getDoc(messOwnerRef);
+          if (messOwnerSnap.exists()) {
+            setMessName(messOwnerSnap.data().messName || "");
+          }
+        }
       }
     } catch (err) {
       console.error(err);
@@ -87,6 +99,12 @@ export default function PublicSearch() {
             <div className="mt-6 border-t border-gray-200 pt-6">
               <h3 className="text-lg font-medium leading-6 text-gray-900">ग्राहक माहिती</h3>
               <dl className="mt-4 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
+                {messName && (
+                  <div className="sm:col-span-2">
+                    <dt className="text-sm font-medium text-gray-500">मेसचे नाव</dt>
+                    <dd className="mt-1 text-lg font-semibold text-rose-600">{messName}</dd>
+                  </div>
+                )}
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">नाव</dt>
                   <dd className="mt-1 text-sm text-gray-900">
