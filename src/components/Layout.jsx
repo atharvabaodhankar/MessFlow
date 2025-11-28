@@ -2,16 +2,6 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useLanguage } from "../contexts/LanguageContext";
-import { 
-  HomeIcon, 
-  UsersIcon, 
-  QrCodeIcon, 
-  ArrowRightOnRectangleIcon,
-  Bars3Icon,
-  XMarkIcon,
-  CurrencyRupeeIcon,
-  LanguageIcon
-} from "@heroicons/react/24/outline";
 
 export default function Layout({ children }) {
   const { logout } = useAuth();
@@ -20,10 +10,10 @@ export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
-    { nameMr: "डॅशबोर्ड", nameEn: "Dashboard", href: "/dashboard", icon: HomeIcon },
-    { nameMr: "ग्राहक", nameEn: "Customers", href: "/customers", icon: UsersIcon },
-    { nameMr: "उपस्थिती", nameEn: "Attendance", href: "/attendance", icon: QrCodeIcon },
-    { nameMr: "प्लॅन्स", nameEn: "Plans", href: "/plans", icon: CurrencyRupeeIcon },
+    { nameMr: "डॅशबोर्ड", nameEn: "Dashboard", href: "/dashboard", icon: "home" },
+    { nameMr: "ग्राहक", nameEn: "Customers", href: "/customers", icon: "groups" },
+    { nameMr: "उपस्थिती", nameEn: "Attendance", href: "/attendance", icon: "checklist" },
+    { nameMr: "प्लॅन्स", nameEn: "Plans", href: "/plans", icon: "receipt_long" },
   ];
 
   async function handleLogout() {
@@ -35,8 +25,50 @@ export default function Layout({ children }) {
   }
 
   return (
-    <div className="min-h-screen bg-gray-50 flex">
-      {/* Mobile sidebar backdrop */}
+    <div className="min-h-screen bg-brand-mint flex">
+      {/* Desktop Sidebar */}
+      <aside className="hidden md:flex md:w-64 md:flex-col bg-white border-r border-gray-200">
+        {/* Logo */}
+        <div className="h-20 flex items-center justify-center border-b border-[#E8F3EF]">
+          <h1 className="text-2xl font-bold text-[#0F4C3A]">मेसफ्लो (MessFlow)</h1>
+        </div>
+
+        {/* Navigation */}
+        <nav className="flex-1 px-4 py-6 space-y-1">
+          {navigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  isActive
+                    ? "bg-[#E8F3EF] text-[#0F4C3A]"
+                    : "text-[#2E2E2E] hover:bg-gray-50 hover:text-[#0F4C3A]"
+                }`}
+              >
+                <span className={`material-icons-outlined mr-3 text-xl ${isActive ? 'text-[#0F4C3A]' : 'text-gray-400'}`}>
+                  {item.icon}
+                </span>
+                {isMarathi ? item.nameMr : item.nameEn}
+              </Link>
+            );
+          })}
+        </nav>
+
+        {/* Logout */}
+        <div className="p-4 border-t border-[#E8F3EF]">
+          <button
+            onClick={handleLogout}
+            className="flex items-center w-full px-4 py-3 text-sm font-medium text-[#2E2E2E] hover:bg-gray-50 hover:text-[#0F4C3A] rounded-lg transition-colors"
+          >
+            <span className="material-icons-outlined mr-3 text-xl text-gray-400">logout</span>
+            {isMarathi ? "बाहेर पडा" : "Logout"}
+          </button>
+        </div>
+      </aside>
+
+      {/* Mobile Sidebar */}
       {sidebarOpen && (
         <div 
           className="fixed inset-0 z-40 bg-gray-600 bg-opacity-75 md:hidden"
@@ -44,157 +76,63 @@ export default function Layout({ children }) {
         ></div>
       )}
 
-      {/* Mobile Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white transform transition-transform duration-300 ease-in-out md:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-rose-600">मेसफ्लो (MessFlow)</h1>
-          <button onClick={() => setSidebarOpen(false)} className="text-gray-500 hover:text-gray-700">
-            <XMarkIcon className="h-6 w-6" />
-          </button>
+        <div className="h-20 flex items-center justify-center border-b border-primary-light">
+          <h1 className="text-2xl font-bold text-primary">मेसफ्लो</h1>
         </div>
-        <div className="flex-1 flex flex-col overflow-y-auto pt-5 pb-4">
-          <nav className="mt-5 flex-1 px-2 space-y-1">
-            {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  onClick={() => setSidebarOpen(false)}
-                  className={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${
-                    isActive
-                      ? "bg-rose-50 text-rose-600"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
-                >
-                  <item.icon
-                    className={`mr-4 flex-shrink-0 h-6 w-6 ${
-                      isActive ? "text-rose-600" : "text-gray-400 group-hover:text-gray-500"
-                    }`}
-                    aria-hidden="true"
-                  />
-                  {isMarathi ? item.nameMr : item.nameEn}
-                </Link>
-              );
-            })}
-          </nav>
-          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-            <button
-              onClick={logout}
-              className="flex-shrink-0 w-full group block"
-            >
-              <div className="flex items-center">
-                <ArrowRightOnRectangleIcon className="inline-block h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                <div className="ml-3">
-                  <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">
-                    {isMarathi ? "बाहेर पडा" : "Logout"}
-                  </p>
-                </div>
-              </div>
-            </button>
-          </div>
-        </div>
-      </div>
-
-      {/* Desktop Sidebar */}
-      <div className="hidden md:flex md:w-64 md:flex-col bg-white border-r border-gray-200">
-        <div className="flex items-center justify-center h-16 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-rose-600">मेसफ्लो (MessFlow)</h1>
-        </div>
-        <div className="flex-1 flex flex-col overflow-y-auto pt-5 pb-4">
-          <nav className="mt-5 flex-1 px-2 space-y-1">
-            {navigation.map((item) => {
-              const isActive = location.pathname === item.href;
-              return (
-                <Link
-                  key={item.href}
-                  to={item.href}
-                  className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
-                    isActive
-                      ? "bg-rose-50 text-rose-600"
-                      : "text-gray-600 hover:bg-gray-50 hover:text-gray-900"
-                  }`}
-                >
-                  <item.icon
-                    className={`mr-3 flex-shrink-0 h-6 w-6 ${
-                      isActive ? "text-rose-600" : "text-gray-400 group-hover:text-gray-500"
-                    }`}
-                    aria-hidden="true"
-                  />
-                  {isMarathi ? item.nameMr : item.nameEn}
-                </Link>
-              );
-            })}
-          </nav>
-          <div className="flex-shrink-0 flex border-t border-gray-200 p-4">
-            <button
-              onClick={logout}
-              className="flex-shrink-0 w-full group block"
-            >
-              <div className="flex items-center">
-                <ArrowRightOnRectangleIcon className="inline-block h-5 w-5 text-gray-400 group-hover:text-gray-500" />
-                <div className="ml-3">
-                  <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                    {isMarathi ? "बाहेर पडा" : "Logout"}
-                  </p>
-                </div>
-              </div>
-            </button>
-          </div>
-        </div>
+        <nav className="flex-1 px-4 py-6 space-y-1">
+          {navigation.map((item) => {
+            const isActive = location.pathname === item.href;
+            return (
+              <Link
+                key={item.href}
+                to={item.href}
+                onClick={() => setSidebarOpen(false)}
+                className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                  isActive
+                    ? "bg-primary-light text-primary"
+                    : "text-brand-charcoal hover:bg-gray-50"
+                }`}
+              >
+                <span className={`material-icons-outlined mr-3 text-xl ${isActive ? 'text-primary' : 'text-gray-400'}`}>
+                  {item.icon}
+                </span>
+                {isMarathi ? item.nameMr : item.nameEn}
+              </Link>
+            );
+          })}
+        </nav>
       </div>
 
       {/* Main content */}
-      <div className="flex flex-col w-0 flex-1 overflow-hidden">
-        {/* Mobile Header */}
-        <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-white border-b border-gray-200 flex items-center justify-between h-16">
-          <div className="flex items-center">
-            <button
-              onClick={() => setSidebarOpen(true)}
-              className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-rose-500"
-            >
-              <span className="sr-only">Open sidebar</span>
-              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-            </button>
-            <h1 className="ml-2 text-lg font-bold text-rose-600">मेसफ्लो (MessFlow)</h1>
-          </div>
-          <div className="flex items-center gap-2 mr-2">
+      <div className="flex-1 flex flex-col overflow-hidden">
+        {/* Top Header */}
+        <header className="h-20 bg-white border-b border-primary-light flex items-center justify-between px-8">
+          {/* Mobile menu button */}
+          <button
+            onClick={() => setSidebarOpen(true)}
+            className="md:hidden p-2 rounded-lg text-brand-charcoal hover:bg-primary-light"
+          >
+            <span className="material-icons-outlined">menu</span>
+          </button>
+
+          {/* Language Toggle & User Avatar */}
+          <div className="ml-auto flex items-center space-x-4">
             <button
               onClick={toggleLanguage}
-              className="inline-flex items-center px-2 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+              className="flex items-center text-sm text-brand-charcoal hover:text-primary px-3 py-2 rounded-lg hover:bg-primary-light transition-colors"
             >
-              <LanguageIcon className="h-4 w-4 mr-1" />
-              {isMarathi ? "मर" : "EN"}
+              <span className="material-icons-outlined mr-2 text-lg text-gold">translate</span>
+              {isMarathi ? "English (EN)" : "मराठी (MR)"}
             </button>
-          </div>
-        </div>
-
-        {/* Desktop Header with Language Toggle */}
-        <div className="hidden md:flex md:items-center md:justify-end md:h-16 md:px-4 md:bg-white md:border-b md:border-gray-200">
-          <div className="flex items-center gap-4">
-            <button
-              onClick={toggleLanguage}
-              className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-            >
-              <LanguageIcon className="h-5 w-5 mr-2" />
-              {isMarathi ? "मराठी (A→अ)" : "English (अ→A)"}
-            </button>
-            <button
-              onClick={handleLogout}
-              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
-            >
-              <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2 text-gray-500" />
-              {isMarathi ? "बाहेर पडा" : "Logout"}
-            </button>
-          </div>
-        </div>
-
-        <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">
-          <div className="py-6">
-            <div className="max-w-7xl mx-auto px-4 sm:px-6 md:px-8">
-              {children}
+            <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
+              <span className="material-icons-outlined text-gold">person</span>
             </div>
           </div>
+        </header>
+
+        <main className="flex-1 overflow-y-auto bg-brand-mint p-8">
+          {children}
         </main>
       </div>
     </div>

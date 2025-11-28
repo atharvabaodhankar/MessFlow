@@ -3,10 +3,11 @@ import Layout from "../components/Layout";
 import { db } from "../firebase";
 import { collection, query, where, getCountFromServer, doc, getDoc } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
-import { UsersIcon, QrCodeIcon, ClockIcon } from "@heroicons/react/24/outline";
+import { useLanguage } from "../contexts/LanguageContext";
 
 export default function Dashboard() {
   const { currentUser } = useAuth();
+  const { isMarathi } = useLanguage();
   const [stats, setStats] = useState({
     activeCustomers: 0,
     todayAttendance: 0,
@@ -36,7 +37,6 @@ export default function Dashboard() {
 
   async function fetchStats() {
     try {
-      // 1. Active Customers
       const activeQuery = query(
         collection(db, "customers"), 
         where("messId", "==", currentUser.uid),
@@ -44,7 +44,6 @@ export default function Dashboard() {
       );
       const activeSnapshot = await getCountFromServer(activeQuery);
 
-      // 2. Today's Attendance
       const today = new Date().toISOString().split('T')[0];
       const attendanceQuery = query(
         collection(db, "attendance"),
@@ -53,7 +52,6 @@ export default function Dashboard() {
       );
       const attendanceSnapshot = await getCountFromServer(attendanceQuery);
 
-      // 3. Expiring Soon
       const expiringQuery = query(
         collection(db, "customers"),
         where("messId", "==", currentUser.uid),
@@ -73,89 +71,105 @@ export default function Dashboard() {
     }
   }
 
-  const cards = [
-    {
-      name: "सक्रिय ग्राहक",
-      value: stats.activeCustomers,
-      icon: UsersIcon,
-      color: "bg-gradient-to-r from-blue-500 to-blue-600",
-      textColor: "text-blue-50",
-    },
-    {
-      name: "आजची उपस्थिती",
-      value: stats.todayAttendance,
-      icon: QrCodeIcon,
-      color: "bg-gradient-to-r from-green-500 to-green-600",
-      textColor: "text-green-50",
-    },
-    {
-      name: "लवकरच संपणारे",
-      value: stats.expiringSoon,
-      icon: ClockIcon,
-      color: "bg-gradient-to-r from-yellow-500 to-yellow-600",
-      textColor: "text-yellow-50",
-    },
-  ];
-
   return (
     <Layout>
-      <div className="mb-8">
-        <h1 className="text-3xl font-bold text-gray-900">{messName || "मेसफ्लो"}</h1>
-        <p className="mt-2 text-sm text-gray-600">
-          तुमच्या मेसचा आजचा आढावा
-        </p>
-      </div>
-      
-      <div className="grid grid-cols-1 gap-6 sm:grid-cols-2 lg:grid-cols-3">
-        {cards.map((card) => (
-          <div
-            key={card.name}
-            className={`${card.color} rounded-xl shadow-lg overflow-hidden transform transition-all hover:scale-105 duration-300`}
-          >
-            <div className="p-6">
-              <div className="flex items-center">
-                <div className="flex-shrink-0 p-3 rounded-lg bg-white/20 backdrop-blur-sm">
-                  <card.icon className={`h-8 w-8 ${card.textColor}`} aria-hidden="true" />
-                </div>
-                <div className="ml-5 w-0 flex-1">
-                  <dl>
-                    <dt className={`text-sm font-medium ${card.textColor} opacity-80 truncate`}>
-                      {card.name}
-                    </dt>
-                    <dd>
-                      <div className={`text-3xl font-bold ${card.textColor}`}>
-                        {loading ? "..." : card.value}
-                      </div>
-                    </dd>
-                  </dl>
-                </div>
-              </div>
+      <div className="max-w-6xl">
+        {/* Page Header */}
+        <div className="mb-8">
+          <h1 className="text-4xl font-bold text-primary-dark">
+            {messName || (isMarathi ? "मेसफ्लो" : "MessFlow")}
+          </h1>
+          <p className="mt-2 text-brand-charcoal">
+            {isMarathi ? "तुमच्या मेसचा आजचा आढावा" : "Here's a summary of your mess today"}
+          </p>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
+          {/* Active Customers */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center space-x-4 hover:shadow-md transition-shadow">
+            <div className="w-14 h-14 rounded-xl bg-status-active/10 flex items-center justify-center flex-shrink-0">
+              <span className="material-icons-outlined text-status-active text-2xl">groups</span>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">
+                {isMarathi ? "सक्रिय ग्राहक" : "Active Customers"}
+              </p>
+              <p className="text-3xl font-bold text-primary-dark">
+                {loading ? "..." : stats.activeCustomers}
+              </p>
             </div>
           </div>
-        ))}
-      </div>
 
-      <div className="mt-10">
-        <h2 className="text-lg font-medium text-gray-900 mb-4">जलद क्रिया (Quick Actions)</h2>
-        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-           <button 
-             onClick={() => window.location.href = '/customers'}
-             className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center space-x-3"
-           >
-             <div className="bg-rose-100 p-2 rounded-full">
-               <UsersIcon className="h-6 w-6 text-rose-600" />
-             </div>
-             <span className="font-medium text-gray-700">नवीन ग्राहक जोडा</span>
-           </button>
-           <button 
-             onClick={() => window.location.href = '/attendance'}
-             className="p-4 bg-white border border-gray-200 rounded-lg shadow-sm hover:shadow-md transition-shadow flex items-center space-x-3"
-           >
-             <div className="bg-indigo-100 p-2 rounded-full">
-               <QrCodeIcon className="h-6 w-6 text-indigo-600" />
-             </div>
-             <span className="font-medium text-gray-700">उपस्थिती मार्क करा</span>
-           </button>
+          {/* Daily Attendance */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center space-x-4 hover:shadow-md transition-shadow">
+            <div className="w-14 h-14 rounded-xl bg-primary-light flex items-center justify-center flex-shrink-0">
+              <span className="material-icons-outlined text-primary text-2xl">restaurant</span>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">
+                {isMarathi ? "आजची उपस्थिती" : "Daily Attendance"}
+              </p>
+              <p className="text-3xl font-bold text-primary-dark">
+                {loading ? "..." : stats.todayAttendance}
+              </p>
+            </div>
+          </div>
+
+          {/* Pending Payments */}
+          <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center space-x-4 hover:shadow-md transition-shadow">
+            <div className="w-14 h-14 rounded-xl bg-status-expiring/10 flex items-center justify-center flex-shrink-0">
+              <span className="material-icons-outlined text-status-expiring text-2xl">hourglass_top</span>
+            </div>
+            <div>
+              <p className="text-sm text-gray-500 mb-1">
+                {isMarathi ? "लवकरच संपणारे" : "Expiring Soon"}
+              </p>
+              <p className="text-3xl font-bold text-primary-dark">
+                {loading ? "..." : stats.expiringSoon}
+              </p>
+            </div>
+          </div>
+        </div>
+
+        {/* Quick Actions */}
+        <div>
+          <h2 className="text-2xl font-semibold text-primary-dark mb-6">
+            {isMarathi ? "जलद क्रिया" : "Quick Actions"}
+          </h2>
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+            {/* Add New Customer */}
+            <button
+              onClick={() => window.location.href = '/customers'}
+              className="bg-white rounded-2xl border border-gray-100 p-8 hover:border-primary hover:shadow-lg transition-all flex flex-col items-center text-center group"
+            >
+              <div className="w-16 h-16 rounded-full bg-primary-light group-hover:bg-primary/20 flex items-center justify-center mb-4 transition-colors">
+                <span className="material-icons-outlined text-primary group-hover:text-primary text-3xl transition-colors">person_add</span>
+              </div>
+              <h3 className="font-semibold text-primary-dark text-lg mb-2">
+                {isMarathi ? "नवीन ग्राहक जोडा" : "Add New Customer"}
+              </h3>
+              <p className="text-sm text-brand-charcoal">
+                {isMarathi ? "तुमच्या मेसमध्ये नवीन सदस्य जोडा" : "Onboard a new member to your mess"}
+              </p>
+            </button>
+
+            {/* Mark Attendance */}
+            <button
+              onClick={() => window.location.href = '/attendance'}
+              className="bg-white rounded-2xl border border-gray-100 p-8 hover:border-primary hover:shadow-lg transition-all flex flex-col items-center text-center group"
+            >
+              <div className="w-16 h-16 rounded-full bg-primary-light group-hover:bg-primary/20 flex items-center justify-center mb-4 transition-colors">
+                <span className="material-icons-outlined text-primary group-hover:text-primary text-3xl transition-colors">edit_calendar</span>
+              </div>
+              <h3 className="font-semibold text-primary-dark text-lg mb-2">
+                {isMarathi ? "उपस्थिती मार्क करा" : "Mark Attendance"}
+              </h3>
+              <p className="text-sm text-brand-charcoal">
+                {isMarathi ? "आजच्या सदस्यांची उपस्थिती नोंद करा" : "Record today's attendance for members"}
+              </p>
+            </button>
+          </div>
         </div>
       </div>
     </Layout>
