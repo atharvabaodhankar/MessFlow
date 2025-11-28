@@ -107,11 +107,11 @@ export default function Layout({ children }) {
       {/* Main content */}
       <div className="flex-1 flex flex-col overflow-hidden">
         {/* Top Header */}
-        <header className="h-20 bg-white border-b border-primary-light flex items-center justify-between px-8">
+        <header className="h-20 bg-white border-b border-[#E8F3EF] flex items-center justify-between px-8">
           {/* Mobile menu button */}
           <button
             onClick={() => setSidebarOpen(true)}
-            className="md:hidden p-2 rounded-lg text-brand-charcoal hover:bg-primary-light"
+            className="md:hidden p-2 rounded-lg text-[#2E2E2E] hover:bg-[#E8F3EF]"
           >
             <span className="material-icons-outlined">menu</span>
           </button>
@@ -120,18 +120,18 @@ export default function Layout({ children }) {
           <div className="ml-auto flex items-center space-x-4">
             <button
               onClick={toggleLanguage}
-              className="flex items-center text-sm text-brand-charcoal hover:text-primary px-3 py-2 rounded-lg hover:bg-primary-light transition-colors"
+              className="flex items-center text-sm text-[#2E2E2E] hover:text-[#0F4C3A] px-3 py-2 rounded-lg hover:bg-[#E8F3EF] transition-colors"
             >
-              <span className="material-icons-outlined mr-2 text-lg text-gold">translate</span>
+              <span className="material-icons-outlined mr-2 text-lg text-[#D4A941]">translate</span>
               {isMarathi ? "English (EN)" : "मराठी (MR)"}
             </button>
-            <div className="w-10 h-10 rounded-full bg-gold/20 flex items-center justify-center">
-              <span className="material-icons-outlined text-gold">person</span>
+            <div className="w-10 h-10 rounded-full bg-[#D4A941]/20 flex items-center justify-center">
+              <span className="material-icons-outlined text-[#D4A941]">person</span>
             </div>
           </div>
         </header>
 
-        <main className="flex-1 overflow-y-auto bg-brand-mint p-8">
+        <main className="flex-1 overflow-y-auto bg-[#E8F3EF] p-8">
           {children}
         </main>
       </div>

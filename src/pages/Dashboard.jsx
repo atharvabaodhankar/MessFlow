@@ -76,10 +76,10 @@ export default function Dashboard() {
       <div className="max-w-6xl">
         {/* Page Header */}
         <div className="mb-8">
-          <h1 className="text-4xl font-bold text-primary-dark">
+          <h1 className="text-4xl font-bold text-[#073327]">
             {messName || (isMarathi ? "मेसफ्लो" : "MessFlow")}
           </h1>
-          <p className="mt-2 text-brand-charcoal">
+          <p className="mt-2 text-[#2E2E2E]">
             {isMarathi ? "तुमच्या मेसचा आजचा आढावा" : "Here's a summary of your mess today"}
           </p>
         </div>
@@ -88,14 +88,14 @@ export default function Dashboard() {
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
           {/* Active Customers */}
           <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center space-x-4 hover:shadow-md transition-shadow">
-            <div className="w-14 h-14 rounded-xl bg-status-active/10 flex items-center justify-center flex-shrink-0">
-              <span className="material-icons-outlined text-status-active text-2xl">groups</span>
+            <div className="w-14 h-14 rounded-xl bg-[#38A169]/10 flex items-center justify-center flex-shrink-0">
+              <span className="material-icons-outlined text-[#38A169] text-2xl">groups</span>
             </div>
             <div>
               <p className="text-sm text-gray-500 mb-1">
                 {isMarathi ? "सक्रिय ग्राहक" : "Active Customers"}
               </p>
-              <p className="text-3xl font-bold text-primary-dark">
+              <p className="text-3xl font-bold text-[#073327]">
                 {loading ? "..." : stats.activeCustomers}
               </p>
             </div>
@@ -103,29 +103,29 @@ export default function Dashboard() {
 
           {/* Daily Attendance */}
           <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center space-x-4 hover:shadow-md transition-shadow">
-            <div className="w-14 h-14 rounded-xl bg-primary-light flex items-center justify-center flex-shrink-0">
-              <span className="material-icons-outlined text-primary text-2xl">restaurant</span>
+            <div className="w-14 h-14 rounded-xl bg-[#E8F3EF] flex items-center justify-center flex-shrink-0">
+              <span className="material-icons-outlined text-[#0F4C3A] text-2xl">restaurant</span>
             </div>
             <div>
               <p className="text-sm text-gray-500 mb-1">
                 {isMarathi ? "आजची उपस्थिती" : "Daily Attendance"}
               </p>
-              <p className="text-3xl font-bold text-primary-dark">
+              <p className="text-3xl font-bold text-[#073327]">
                 {loading ? "..." : stats.todayAttendance}
               </p>
             </div>
           </div>
 
-          {/* Pending Payments */}
+          {/* Expiring Soon */}
           <div className="bg-white rounded-2xl border border-gray-100 p-6 flex items-center space-x-4 hover:shadow-md transition-shadow">
-            <div className="w-14 h-14 rounded-xl bg-status-expiring/10 flex items-center justify-center flex-shrink-0">
-              <span className="material-icons-outlined text-status-expiring text-2xl">hourglass_top</span>
+            <div className="w-14 h-14 rounded-xl bg-[#ECC94B]/10 flex items-center justify-center flex-shrink-0">
+              <span className="material-icons-outlined text-[#ECC94B] text-2xl">hourglass_top</span>
             </div>
             <div>
               <p className="text-sm text-gray-500 mb-1">
                 {isMarathi ? "लवकरच संपणारे" : "Expiring Soon"}
               </p>
-              <p className="text-3xl font-bold text-primary-dark">
+              <p className="text-3xl font-bold text-[#073327]">
                 {loading ? "..." : stats.expiringSoon}
               </p>
             </div>
@@ -134,22 +134,22 @@ export default function Dashboard() {
 
         {/* Quick Actions */}
         <div>
-          <h2 className="text-2xl font-semibold text-primary-dark mb-6">
+          <h2 className="text-2xl font-semibold text-[#073327] mb-6">
             {isMarathi ? "जलद क्रिया" : "Quick Actions"}
           </h2>
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
             {/* Add New Customer */}
             <button
               onClick={() => window.location.href = '/customers'}
-              className="bg-white rounded-2xl border border-gray-100 p-8 hover:border-primary hover:shadow-lg transition-all flex flex-col items-center text-center group"
+              className="bg-white rounded-2xl border border-gray-100 p-8 hover:border-[#0F4C3A] hover:shadow-lg transition-all flex flex-col items-center text-center group"
             >
-              <div className="w-16 h-16 rounded-full bg-primary-light group-hover:bg-primary/20 flex items-center justify-center mb-4 transition-colors">
-                <span className="material-icons-outlined text-primary group-hover:text-primary text-3xl transition-colors">person_add</span>
+              <div className="w-16 h-16 rounded-full bg-[#E8F3EF] group-hover:bg-[#0F4C3A]/20 flex items-center justify-center mb-4 transition-colors">
+                <span className="material-icons-outlined text-[#0F4C3A] group-hover:text-[#0F4C3A] text-3xl transition-colors">person_add</span>
               </div>
-              <h3 className="font-semibold text-primary-dark text-lg mb-2">
+              <h3 className="font-semibold text-[#073327] text-lg mb-2">
                 {isMarathi ? "नवीन ग्राहक जोडा" : "Add New Customer"}
               </h3>
-              <p className="text-sm text-brand-charcoal">
+              <p className="text-sm text-[#2E2E2E]">
                 {isMarathi ? "तुमच्या मेसमध्ये नवीन सदस्य जोडा" : "Onboard a new member to your mess"}
               </p>
             </button>
@@ -157,15 +157,15 @@ export default function Dashboard() {
             {/* Mark Attendance */}
             <button
               onClick={() => window.location.href = '/attendance'}
-              className="bg-white rounded-2xl border border-gray-100 p-8 hover:border-primary hover:shadow-lg transition-all flex flex-col items-center text-center group"
+              className="bg-white rounded-2xl border border-gray-100 p-8 hover:border-[#0F4C3A] hover:shadow-lg transition-all flex flex-col items-center text-center group"
             >
-              <div className="w-16 h-16 rounded-full bg-primary-light group-hover:bg-primary/20 flex items-center justify-center mb-4 transition-colors">
-                <span className="material-icons-outlined text-primary group-hover:text-primary text-3xl transition-colors">edit_calendar</span>
+              <div className="w-16 h-16 rounded-full bg-[#E8F3EF] group-hover:bg-[#0F4C3A]/20 flex items-center justify-center mb-4 transition-colors">
+                <span className="material-icons-outlined text-[#0F4C3A] group-hover:text-[#0F4C3A] text-3xl transition-colors">edit_calendar</span>
               </div>
-              <h3 className="font-semibold text-primary-dark text-lg mb-2">
+              <h3 className="font-semibold text-[#073327] text-lg mb-2">
                 {isMarathi ? "उपस्थिती मार्क करा" : "Mark Attendance"}
               </h3>
-              <p className="text-sm text-brand-charcoal">
+              <p className="text-sm text-[#2E2E2E]">
                 {isMarathi ? "आजच्या सदस्यांची उपस्थिती नोंद करा" : "Record today's attendance for members"}
               </p>
             </button>
