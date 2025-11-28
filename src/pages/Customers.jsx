@@ -31,6 +31,7 @@ export default function Customers() {
   
   // Form State
   const [name, setName] = useState("");
+  const [nameMarathi, setNameMarathi] = useState("");
   const [mobile, setMobile] = useState("");
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedPlanId, setSelectedPlanId] = useState("");
@@ -80,7 +81,7 @@ export default function Customers() {
 
   async function handleSubmit(e) {
     e.preventDefault();
-    setIsSaving(true); // Start saving
+    setIsSaving(true);
     try {
       const start = new Date(startDate);
       const end = new Date(start);
@@ -88,36 +89,9 @@ export default function Customers() {
 
       const selectedPlan = plans.find(p => p.id === selectedPlanId);
 
-      // Bidirectional Translation Logic
-      let nameEnglish = "";
-      let nameMarathiVal = "";
-
-      // Simple check for Devanagari characters
-      const isInputMarathi = /[^\x00-\x7F]/.test(name);
-
-      if (isInputMarathi) {
-        nameMarathiVal = name;
-        try {
-          nameEnglish = await translateMRtoEN(name);
-          console.log(`Translated MR->EN: "${name}" to "${nameEnglish}"`);
-        } catch (err) {
-          console.error("Failed to translate MR->EN:", err);
-          nameEnglish = name; // Fallback
-        }
-      } else {
-        nameEnglish = name;
-        try {
-          nameMarathiVal = await translateENtoMR(name);
-          console.log(`Translated EN->MR: "${name}" to "${nameMarathiVal}"`);
-        } catch (err) {
-          console.error("Failed to translate EN->MR:", err);
-          nameMarathiVal = name; // Fallback
-        }
-      }
-
       const customerData = {
-        name: nameEnglish, // Always store English name in 'name' field for consistency
-        nameMarathi: nameMarathiVal, // Store Marathi name here
+        name, // English name
+        nameMarathi: nameMarathi || name, // Marathi name (fallback to English if not provided)
         mobile,
         startDate: Timestamp.fromDate(start),
         endDate: Timestamp.fromDate(end),
@@ -165,6 +139,7 @@ export default function Customers() {
     if (customer) {
       setEditingCustomer(customer);
       setName(customer.name);
+      setNameMarathi(customer.nameMarathi || "");
       setMobile(customer.mobile);
       setStartDate(customer.startDate.toDate().toISOString().split('T')[0]);
       setSelectedPlanId(customer.planId || "");
@@ -173,6 +148,7 @@ export default function Customers() {
     } else {
       setEditingCustomer(null);
       setName("");
+      setNameMarathi("");
       setMobile("");
       setStartDate(new Date().toISOString().split('T')[0]);
       setSelectedPlanId("");
@@ -342,7 +318,7 @@ export default function Customers() {
                   </div>
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">
-                      नाव
+                      नाव (इंग्रजी / English Name)
                     </label>
                     <input
                       type="text"
@@ -352,7 +328,23 @@ export default function Customers() {
                       value={name}
                       onChange={(e) => setName(e.target.value)}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                      placeholder="उदा: Atharva Baodhankar"
                     />
+                  </div>
+                  <div>
+                    <label htmlFor="nameMarathi" className="block text-sm font-medium text-gray-700">
+                      नाव (मराठी / Marathi Name)
+                    </label>
+                    <input
+                      type="text"
+                      name="nameMarathi"
+                      id="nameMarathi"
+                      value={nameMarathi}
+                      onChange={(e) => setNameMarathi(e.target.value)}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                      placeholder="उदा: अथर्व बाओधनकर"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">वैकल्पिक - रिक्त असल्यास इंग्रजी नाव वापरले जाईल</p>
                   </div>
                   <div>
                     <label htmlFor="mobile" className="block text-sm font-medium text-gray-700">

@@ -20,10 +20,10 @@ export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
-    { name: "डॅशबोर्ड", href: "/dashboard", icon: HomeIcon },
-    { name: "ग्राहक", href: "/customers", icon: UsersIcon },
-    { name: "उपस्थिती", href: "/attendance", icon: QrCodeIcon },
-    { name: "प्लॅन्स", href: "/plans", icon: CurrencyRupeeIcon },
+    { nameMr: "डॅशबोर्ड", nameEn: "Dashboard", href: "/dashboard", icon: HomeIcon },
+    { nameMr: "ग्राहक", nameEn: "Customers", href: "/customers", icon: UsersIcon },
+    { nameMr: "उपस्थिती", nameEn: "Attendance", href: "/attendance", icon: QrCodeIcon },
+    { nameMr: "प्लॅन्स", nameEn: "Plans", href: "/plans", icon: CurrencyRupeeIcon },
   ];
 
   async function handleLogout() {
@@ -58,7 +58,7 @@ export default function Layout({ children }) {
               const isActive = location.pathname === item.href;
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   to={item.href}
                   onClick={() => setSidebarOpen(false)}
                   className={`group flex items-center px-2 py-2 text-base font-medium rounded-md ${
@@ -73,7 +73,7 @@ export default function Layout({ children }) {
                     }`}
                     aria-hidden="true"
                   />
-                  {item.name}
+                  {isMarathi ? item.nameMr : item.nameEn}
                 </Link>
               );
             })}
@@ -87,7 +87,7 @@ export default function Layout({ children }) {
                 <ArrowRightOnRectangleIcon className="inline-block h-5 w-5 text-gray-400 group-hover:text-gray-500" />
                 <div className="ml-3">
                   <p className="text-base font-medium text-gray-700 group-hover:text-gray-900">
-                    बाहेर पडा
+                    {isMarathi ? "बाहेर पडा" : "Logout"}
                   </p>
                 </div>
               </div>
@@ -107,7 +107,7 @@ export default function Layout({ children }) {
               const isActive = location.pathname === item.href;
               return (
                 <Link
-                  key={item.name}
+                  key={item.href}
                   to={item.href}
                   className={`group flex items-center px-2 py-2 text-sm font-medium rounded-md ${
                     isActive
@@ -121,7 +121,7 @@ export default function Layout({ children }) {
                     }`}
                     aria-hidden="true"
                   />
-                  {item.name}
+                  {isMarathi ? item.nameMr : item.nameEn}
                 </Link>
               );
             })}
@@ -135,7 +135,7 @@ export default function Layout({ children }) {
                 <ArrowRightOnRectangleIcon className="inline-block h-5 w-5 text-gray-400 group-hover:text-gray-500" />
                 <div className="ml-3">
                   <p className="text-sm font-medium text-gray-700 group-hover:text-gray-900">
-                    बाहेर पडा
+                    {isMarathi ? "बाहेर पडा" : "Logout"}
                   </p>
                 </div>
               </div>
@@ -161,10 +161,10 @@ export default function Layout({ children }) {
           <div className="flex items-center gap-2 mr-2">
             <button
               onClick={toggleLanguage}
-              className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-rose-700 bg-rose-100 hover:bg-rose-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+              className="inline-flex items-center px-2 py-1 border border-gray-300 text-xs font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
             >
               <LanguageIcon className="h-4 w-4 mr-1" />
-              {isMarathi ? "EN" : "मर"}
+              {isMarathi ? "मर" : "EN"}
             </button>
           </div>
         </div>
@@ -174,17 +174,17 @@ export default function Layout({ children }) {
           <div className="flex items-center gap-4">
             <button
               onClick={toggleLanguage}
-              className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-rose-700 bg-rose-100 hover:bg-rose-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+              className="inline-flex items-center px-3 py-1 border border-gray-300 text-sm font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
             >
-              <LanguageIcon className="h-5 w-5 mr-1" />
-              {isMarathi ? "English" : "मराठी"}
+              <LanguageIcon className="h-5 w-5 mr-2" />
+              {isMarathi ? "मराठी (A→अ)" : "English (अ→A)"}
             </button>
             <button
               onClick={handleLogout}
               className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
             >
               <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2 text-gray-500" />
-              बाहेर पडा
+              {isMarathi ? "बाहेर पडा" : "Logout"}
             </button>
           </div>
         </div>
