@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import { 
   HomeIcon, 
   UsersIcon, 
@@ -8,11 +9,13 @@ import {
   ArrowRightOnRectangleIcon,
   Bars3Icon,
   XMarkIcon,
-  CurrencyRupeeIcon
+  CurrencyRupeeIcon,
+  LanguageIcon
 } from "@heroicons/react/24/outline";
 
 export default function Layout({ children }) {
   const { logout } = useAuth();
+  const { language, toggleLanguage, isMarathi } = useLanguage();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
@@ -22,6 +25,14 @@ export default function Layout({ children }) {
     { name: "उपस्थिती", href: "/attendance", icon: QrCodeIcon },
     { name: "प्लॅन्स", href: "/plans", icon: CurrencyRupeeIcon },
   ];
+
+  async function handleLogout() {
+    try {
+      await logout();
+    } catch (error) {
+      console.error("Failed to log out", error);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-gray-50 flex">
@@ -136,15 +147,46 @@ export default function Layout({ children }) {
       {/* Main content */}
       <div className="flex flex-col w-0 flex-1 overflow-hidden">
         {/* Mobile Header */}
-        <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-white border-b border-gray-200 flex items-center h-16">
-          <button
-            onClick={() => setSidebarOpen(true)}
-            className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-rose-500"
-          >
-            <span className="sr-only">Open sidebar</span>
-            <Bars3Icon className="h-6 w-6" aria-hidden="true" />
-          </button>
-          <h1 className="ml-2 text-lg font-bold text-rose-600">मेसफ्लो (MessFlow)</h1>
+        <div className="md:hidden pl-1 pt-1 sm:pl-3 sm:pt-3 bg-white border-b border-gray-200 flex items-center justify-between h-16">
+          <div className="flex items-center">
+            <button
+              onClick={() => setSidebarOpen(true)}
+              className="-ml-0.5 -mt-0.5 h-12 w-12 inline-flex items-center justify-center rounded-md text-gray-500 hover:text-gray-900 focus:outline-none focus:ring-2 focus:ring-inset focus:ring-rose-500"
+            >
+              <span className="sr-only">Open sidebar</span>
+              <Bars3Icon className="h-6 w-6" aria-hidden="true" />
+            </button>
+            <h1 className="ml-2 text-lg font-bold text-rose-600">मेसफ्लो (MessFlow)</h1>
+          </div>
+          <div className="flex items-center gap-2 mr-2">
+            <button
+              onClick={toggleLanguage}
+              className="inline-flex items-center px-2 py-1 border border-transparent text-xs font-medium rounded-md text-rose-700 bg-rose-100 hover:bg-rose-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+            >
+              <LanguageIcon className="h-4 w-4 mr-1" />
+              {isMarathi ? "EN" : "मर"}
+            </button>
+          </div>
+        </div>
+
+        {/* Desktop Header with Language Toggle */}
+        <div className="hidden md:flex md:items-center md:justify-end md:h-16 md:px-4 md:bg-white md:border-b md:border-gray-200">
+          <div className="flex items-center gap-4">
+            <button
+              onClick={toggleLanguage}
+              className="inline-flex items-center px-3 py-1 border border-transparent text-sm font-medium rounded-md text-rose-700 bg-rose-100 hover:bg-rose-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+            >
+              <LanguageIcon className="h-5 w-5 mr-1" />
+              {isMarathi ? "English" : "मराठी"}
+            </button>
+            <button
+              onClick={handleLogout}
+              className="inline-flex items-center px-3 py-2 border border-transparent text-sm leading-4 font-medium rounded-md text-gray-700 bg-white hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-rose-500"
+            >
+              <ArrowRightOnRectangleIcon className="h-5 w-5 mr-2 text-gray-500" />
+              बाहेर पडा
+            </button>
+          </div>
         </div>
 
         <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">

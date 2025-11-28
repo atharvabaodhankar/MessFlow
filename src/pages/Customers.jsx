@@ -15,12 +15,13 @@ import {
   limit
 } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
-import { translateENtoMR } from "../utils/translator";
+import { useLanguage } from "../contexts/LanguageContext";
+import { translateENtoMR, translateMRtoEN } from "../utils/translator";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 export default function Customers() {
-  // ... existing state ...
   const { currentUser } = useAuth();
+  const { isMarathi } = useLanguage();
   const [customers, setCustomers] = useState([]);
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
@@ -86,19 +87,36 @@ export default function Customers() {
 
       const selectedPlan = plans.find(p => p.id === selectedPlanId);
 
-      // Generate Marathi Name
-      let nameMarathi = "";
-      try {
-        nameMarathi = await translateENtoMR(name);
-        console.log(`Translated "${name}" to "${nameMarathi}"`);
-      } catch (err) {
-        console.error("Failed to translate name:", err);
-        nameMarathi = name; // Fallback
+      // Bidirectional Translation Logic
+      let nameEnglish = "";
+      let nameMarathiVal = "";
+
+      // Simple check for Devanagari characters
+      const isInputMarathi = /[^\x00-\x7F]/.test(name);
+
+      if (isInputMarathi) {
+        nameMarathiVal = name;
+        try {
+          nameEnglish = await translateMRtoEN(name);
+          console.log(`Translated MR->EN: "${name}" to "${nameEnglish}"`);
+        } catch (err) {
+          console.error("Failed to translate MR->EN:", err);
+          nameEnglish = name; // Fallback
+        }
+      } else {
+        nameEnglish = name;
+        try {
+          nameMarathiVal = await translateENtoMR(name);
+          console.log(`Translated EN->MR: "${name}" to "${nameMarathiVal}"`);
+        } catch (err) {
+          console.error("Failed to translate EN->MR:", err);
+          nameMarathiVal = name; // Fallback
+        }
       }
 
       const customerData = {
-        name,
-        nameMarathi, // Save Marathi name
+        name: nameEnglish, // Always store English name in 'name' field for consistency
+        nameMarathi: nameMarathiVal, // Store Marathi name here
         mobile,
         startDate: Timestamp.fromDate(start),
         endDate: Timestamp.fromDate(end),
@@ -225,9 +243,12 @@ export default function Customers() {
                         {person.customerNumber || "-"}
                       </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        {person.nameMarathi || person.name}
-                        {person.nameMarathi && person.nameMarathi !== person.name && (
+                        {isMarathi ? (person.nameMarathi || person.name) : person.name}
+                        {isMarathi && person.nameMarathi && person.nameMarathi !== person.name && (
                           <span className="block text-xs text-gray-400">{person.name}</span>
+                        )}
+                        {!isMarathi && person.nameMarathi && (
+                           <span className="block text-xs text-gray-400">{person.nameMarathi}</span>
                         )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">

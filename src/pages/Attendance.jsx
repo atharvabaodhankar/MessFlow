@@ -11,11 +11,13 @@ import {
   Timestamp 
 } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
+import { useLanguage } from "../contexts/LanguageContext";
 import { CheckCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { translateMRtoEN } from "../utils/translator";
 
 export default function Attendance() {
   const { currentUser } = useAuth();
+  const { isMarathi } = useLanguage();
   const [activeTab, setActiveTab] = useState("manual"); // manual, qr
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
@@ -226,10 +228,13 @@ export default function Attendance() {
                           </span>
                           <div className="flex flex-col">
                             <p className="font-medium text-indigo-600 truncate">
-                              {customer.nameMarathi || customer.name}
+                              {isMarathi ? (customer.nameMarathi || customer.name) : customer.name}
                             </p>
-                            {customer.nameMarathi && customer.nameMarathi !== customer.name && (
+                            {isMarathi && customer.nameMarathi && customer.nameMarathi !== customer.name && (
                               <p className="text-xs text-gray-400">{customer.name}</p>
+                            )}
+                            {!isMarathi && customer.nameMarathi && (
+                              <p className="text-xs text-gray-400">{customer.nameMarathi}</p>
                             )}
                           </div>
                           <p className="ml-1 flex-shrink-0 font-normal text-gray-500 self-center">

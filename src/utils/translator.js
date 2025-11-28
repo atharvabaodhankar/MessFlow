@@ -1,4 +1,8 @@
-import { pipeline } from "@xenova/transformers";
+import { pipeline, env } from "@xenova/transformers";
+
+// Skip local model checks to avoid 404s/index.html responses in Vite
+env.allowLocalModels = false;
+env.useBrowserCache = true;
 
 let mrToEnTranslator = null;
 let enToMrTranslator = null;
