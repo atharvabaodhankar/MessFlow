@@ -6,6 +6,7 @@ import Customers from "./pages/Customers";
 import Attendance from "./pages/Attendance";
 import PublicSearch from "./pages/PublicSearch";
 import Dashboard from "./pages/Dashboard";
+import Plans from "./pages/Plans";
 
 function PrivateRoute({ children }) {
   const { currentUser } = useAuth();
@@ -40,6 +41,14 @@ function App() {
             element={
               <PrivateRoute>
                 <Attendance />
+              </PrivateRoute>
+            }
+          />
+          <Route
+            path="/plans"
+            element={
+              <PrivateRoute>
+                <Plans />
               </PrivateRoute>
             }
           />

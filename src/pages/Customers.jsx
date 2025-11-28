@@ -18,6 +18,7 @@ import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 export default function Customers() {
   const { currentUser } = useAuth();
   const [customers, setCustomers] = useState([]);
+  const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
@@ -26,15 +27,17 @@ export default function Customers() {
   const [name, setName] = useState("");
   const [mobile, setMobile] = useState("");
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedPlanId, setSelectedPlanId] = useState("");
 
   useEffect(() => {
     if (currentUser) {
-      fetchCustomers();
+      fetchData();
     }
   }, [currentUser]);
 
-  async function fetchCustomers() {
+  async function fetchData() {
     try {
+      // Fetch Customers
       const q = query(collection(db, "customers"), where("messId", "==", currentUser.uid));
       const querySnapshot = await getDocs(q);
       const customerList = querySnapshot.docs.map(doc => ({
@@ -42,8 +45,18 @@ export default function Customers() {
         ...doc.data()
       }));
       setCustomers(customerList);
+
+      // Fetch Plans
+      const plansQuery = query(collection(db, "plans"), where("messId", "==", currentUser.uid));
+      const plansSnapshot = await getDocs(plansQuery);
+      const plansList = plansSnapshot.docs.map(doc => ({
+        id: doc.id,
+        ...doc.data()
+      }));
+      setPlans(plansList);
+
     } catch (error) {
-      console.error("Error fetching customers:", error);
+      console.error("Error fetching data:", error);
     } finally {
       setLoading(false);
     }
@@ -56,14 +69,19 @@ export default function Customers() {
       const end = new Date(start);
       end.setDate(start.getDate() + 30);
 
+      const selectedPlan = plans.find(p => p.id === selectedPlanId);
+
       const customerData = {
         name,
         mobile,
         startDate: Timestamp.fromDate(start),
         endDate: Timestamp.fromDate(end),
         messId: currentUser.uid,
-        status: "active", // active, expiring, expired
-        updatedAt: Timestamp.now()
+        status: "active",
+        updatedAt: Timestamp.now(),
+        planId: selectedPlan ? selectedPlan.id : null,
+        planName: selectedPlan ? selectedPlan.name : null,
+        planPrice: selectedPlan ? selectedPlan.price : null
       };
 
       if (editingCustomer) {
@@ -76,7 +94,7 @@ export default function Customers() {
       }
 
       closeModal();
-      fetchCustomers();
+      fetchData();
     } catch (error) {
       console.error("Error saving customer:", error);
     }
@@ -86,7 +104,7 @@ export default function Customers() {
     if (window.confirm("तुम्हाला खात्री आहे की तुम्ही या ग्राहकाला काढू इच्छिता?")) {
       try {
         await deleteDoc(doc(db, "customers", id));
-        fetchCustomers();
+        fetchData();
       } catch (error) {
         console.error("Error deleting customer:", error);
       }
@@ -99,11 +117,13 @@ export default function Customers() {
       setName(customer.name);
       setMobile(customer.mobile);
       setStartDate(customer.startDate.toDate().toISOString().split('T')[0]);
+      setSelectedPlanId(customer.planId || "");
     } else {
       setEditingCustomer(null);
       setName("");
       setMobile("");
       setStartDate(new Date().toISOString().split('T')[0]);
+      setSelectedPlanId("");
     }
     setIsModalOpen(true);
   }
@@ -147,6 +167,9 @@ export default function Customers() {
                       मोबाईल
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      प्लॅन
+                    </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       सुरुवात तारीख
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -168,6 +191,9 @@ export default function Customers() {
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {person.mobile}
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {person.planName || "-"}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {person.startDate.toDate().toLocaleDateString('mr-IN')}
@@ -246,6 +272,25 @@ export default function Customers() {
                       onChange={(e) => setMobile(e.target.value)}
                       className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
                     />
+                  </div>
+                  <div>
+                    <label htmlFor="plan" className="block text-sm font-medium text-gray-700">
+                      मेस प्लॅन
+                    </label>
+                    <select
+                      id="plan"
+                      name="plan"
+                      value={selectedPlanId}
+                      onChange={(e) => setSelectedPlanId(e.target.value)}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                    >
+                      <option value="">-- प्लॅन निवडा --</option>
+                      {plans.map((plan) => (
+                        <option key={plan.id} value={plan.id}>
+                          {plan.name} - ₹{plan.price}
+                        </option>
+                      ))}
+                    </select>
                   </div>
                   <div>
                     <label htmlFor="startDate" className="block text-sm font-medium text-gray-700">

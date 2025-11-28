@@ -7,7 +7,8 @@ import {
   QrCodeIcon, 
   ArrowRightOnRectangleIcon,
   Bars3Icon,
-  XMarkIcon
+  XMarkIcon,
+  CurrencyRupeeIcon
 } from "@heroicons/react/24/outline";
 
 export default function Layout({ children }) {
@@ -19,6 +20,7 @@ export default function Layout({ children }) {
     { name: "डॅशबोर्ड", href: "/dashboard", icon: HomeIcon },
     { name: "ग्राहक", href: "/customers", icon: UsersIcon },
     { name: "उपस्थिती", href: "/attendance", icon: QrCodeIcon },
+    { name: "प्लॅन्स", href: "/plans", icon: CurrencyRupeeIcon },
   ];
 
   return (

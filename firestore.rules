@@ -1,0 +1,32 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper to check if the user is the owner of the data
+    function isOwner(messId) {
+      return request.auth != null && request.auth.uid == messId;
+    }
+
+    match /customers/{customerId} {
+      // Allow public read for search functionality
+      allow read: if true;
+      
+      // Only owner can create, update, delete
+      allow create: if isOwner(request.resource.data.messId);
+      allow update, delete: if isOwner(resource.data.messId);
+    }
+
+    match /attendance/{attendanceId} {
+      // Only owner can read/write attendance
+      allow read: if isOwner(resource.data.messId);
+      allow create: if isOwner(request.resource.data.messId);
+      allow update, delete: if isOwner(resource.data.messId);
+    }
+
+    match /plans/{planId} {
+      allow read: if isOwner(resource.data.messId);
+      allow create: if isOwner(request.resource.data.messId);
+      allow update, delete: if isOwner(resource.data.messId);
+    }
+  }
+}
