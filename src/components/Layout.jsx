@@ -16,7 +16,7 @@ export default function Layout({ children }) {
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
   const navigation = [
-    { name: "डॅशबोर्ड", href: "/", icon: HomeIcon },
+    { name: "डॅशबोर्ड", href: "/dashboard", icon: HomeIcon },
     { name: "ग्राहक", href: "/customers", icon: UsersIcon },
     { name: "उपस्थिती", href: "/attendance", icon: QrCodeIcon },
   ];
