@@ -1,7 +1,6 @@
 import React, { useState } from "react";
 import { db } from "../firebase";
 import { collection, query, where, getDocs } from "firebase/firestore";
-import { MagnifyingGlassIcon } from "@heroicons/react/24/solid";
 import { Link } from "react-router-dom";
 
 export default function PublicSearch() {
@@ -90,7 +89,12 @@ export default function PublicSearch() {
               <dl className="mt-4 grid grid-cols-1 gap-x-4 gap-y-6 sm:grid-cols-2">
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">नाव</dt>
-                  <dd className="mt-1 text-sm text-gray-900">{customer.name}</dd>
+                  <dd className="mt-1 text-sm text-gray-900">
+                    {customer.nameMarathi || customer.name}
+                  </dd>
+                  {customer.nameMarathi && customer.nameMarathi !== customer.name && (
+                    <dd className="text-xs text-gray-500">({customer.name})</dd>
+                  )}
                 </div>
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">स्थिती</dt>

@@ -224,8 +224,15 @@ export default function Attendance() {
                           <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-100 text-xs font-bold text-gray-600 mr-2">
                             {customer.customerNumber || "-"}
                           </span>
-                          <p className="font-medium text-indigo-600 truncate">{customer.name}</p>
-                          <p className="ml-1 flex-shrink-0 font-normal text-gray-500">
+                          <div className="flex flex-col">
+                            <p className="font-medium text-indigo-600 truncate">
+                              {customer.nameMarathi || customer.name}
+                            </p>
+                            {customer.nameMarathi && customer.nameMarathi !== customer.name && (
+                              <p className="text-xs text-gray-400">{customer.name}</p>
+                            )}
+                          </div>
+                          <p className="ml-1 flex-shrink-0 font-normal text-gray-500 self-center">
                             ({customer.mobile})
                           </p>
                         </div>

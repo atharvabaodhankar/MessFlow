@@ -15,22 +15,22 @@ import {
   limit
 } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
+import { translateENtoMR } from "../utils/translator";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
 
 export default function Customers() {
+  // ... existing state ...
   const { currentUser } = useAuth();
   const [customers, setCustomers] = useState([]);
   const [plans, setPlans] = useState([]);
   const [loading, setLoading] = useState(true);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [editingCustomer, setEditingCustomer] = useState(null);
+  const [isSaving, setIsSaving] = useState(false); // Add saving state
   
   // Form State
   const [name, setName] = useState("");
-  const [mobile, setMobile] = useState("");
-  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
-  const [selectedPlanId, setSelectedPlanId] = useState("");
-  const [customerNumber, setCustomerNumber] = useState(""); // New field
+  // ... other state ...
 
   useEffect(() => {
     if (currentUser) {
@@ -69,13 +69,13 @@ export default function Customers() {
 
   async function getNextCustomerNumber() {
     // Simple client-side calculation based on current list
-    // In a high-concurrency app, use a transaction or cloud function
     const maxNum = customers.reduce((max, c) => Math.max(max, c.customerNumber || 0), 0);
     return maxNum + 1;
   }
 
   async function handleSubmit(e) {
     e.preventDefault();
+    setIsSaving(true); // Start saving
     try {
       const start = new Date(startDate);
       const end = new Date(start);
@@ -83,8 +83,19 @@ export default function Customers() {
 
       const selectedPlan = plans.find(p => p.id === selectedPlanId);
 
+      // Generate Marathi Name
+      let nameMarathi = "";
+      try {
+        nameMarathi = await translateENtoMR(name);
+        console.log(`Translated "${name}" to "${nameMarathi}"`);
+      } catch (err) {
+        console.error("Failed to translate name:", err);
+        nameMarathi = name; // Fallback
+      }
+
       const customerData = {
         name,
+        nameMarathi, // Save Marathi name
         mobile,
         startDate: Timestamp.fromDate(start),
         endDate: Timestamp.fromDate(end),
@@ -94,7 +105,7 @@ export default function Customers() {
         planId: selectedPlan ? selectedPlan.id : null,
         planName: selectedPlan ? selectedPlan.name : null,
         planPrice: selectedPlan ? selectedPlan.price : null,
-        customerNumber: Number(customerNumber) // Save as number
+        customerNumber: Number(customerNumber)
       };
 
       if (editingCustomer) {
@@ -110,6 +121,8 @@ export default function Customers() {
       fetchData();
     } catch (error) {
       console.error("Error saving customer:", error);
+    } finally {
+      setIsSaving(false); // End saving
     }
   }
 
@@ -209,7 +222,10 @@ export default function Customers() {
                         {person.customerNumber || "-"}
                       </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
-                        {person.name}
+                        {person.nameMarathi || person.name}
+                        {person.nameMarathi && person.nameMarathi !== person.name && (
+                          <span className="block text-xs text-gray-400">{person.name}</span>
+                        )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {person.mobile}
@@ -345,9 +361,10 @@ export default function Customers() {
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                     <button
                       type="submit"
-                      className="inline-flex w-full justify-center rounded-md border border-transparent bg-rose-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm"
+                      disabled={isSaving}
+                      className="inline-flex w-full justify-center rounded-md border border-transparent bg-rose-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm disabled:opacity-50"
                     >
-                      जतन करा
+                      {isSaving ? "जतन करत आहे..." : "जतन करा"}
                     </button>
                     <button
                       type="button"
