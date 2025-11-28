@@ -34,7 +34,7 @@ export default function Layout({ children }) {
       {/* Mobile Sidebar */}
       <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white transform transition-transform duration-300 ease-in-out md:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
         <div className="flex items-center justify-between h-16 px-4 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-rose-600">MessFlow</h1>
+          <h1 className="text-xl font-bold text-rose-600">मेसफ्लो (MessFlow)</h1>
           <button onClick={() => setSidebarOpen(false)} className="text-gray-500 hover:text-gray-700">
             <XMarkIcon className="h-6 w-6" />
           </button>
@@ -86,7 +86,7 @@ export default function Layout({ children }) {
       {/* Desktop Sidebar */}
       <div className="hidden md:flex md:w-64 md:flex-col bg-white border-r border-gray-200">
         <div className="flex items-center justify-center h-16 border-b border-gray-200">
-          <h1 className="text-xl font-bold text-rose-600">MessFlow</h1>
+          <h1 className="text-xl font-bold text-rose-600">मेसफ्लो (MessFlow)</h1>
         </div>
         <div className="flex-1 flex flex-col overflow-y-auto pt-5 pb-4">
           <nav className="mt-5 flex-1 px-2 space-y-1">
@@ -142,7 +142,7 @@ export default function Layout({ children }) {
             <span className="sr-only">Open sidebar</span>
             <Bars3Icon className="h-6 w-6" aria-hidden="true" />
           </button>
-          <h1 className="ml-2 text-lg font-bold text-rose-600">MessFlow</h1>
+          <h1 className="ml-2 text-lg font-bold text-rose-600">मेसफ्लो (MessFlow)</h1>
         </div>
 
         <main className="flex-1 relative z-0 overflow-y-auto focus:outline-none">

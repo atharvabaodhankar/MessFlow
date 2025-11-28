@@ -107,13 +107,13 @@ export default function PublicSearch() {
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">सुरुवात तारीख</dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {customer.startDate.toDate().toLocaleDateString('en-IN')}
+                    {customer.startDate.toDate().toLocaleDateString('mr-IN')}
                   </dd>
                 </div>
                 <div className="sm:col-span-1">
                   <dt className="text-sm font-medium text-gray-500">शेवटची तारीख</dt>
                   <dd className="mt-1 text-sm text-gray-900">
-                    {customer.endDate.toDate().toLocaleDateString('en-IN')}
+                    {customer.endDate.toDate().toLocaleDateString('mr-IN')}
                   </dd>
                 </div>
               </dl>

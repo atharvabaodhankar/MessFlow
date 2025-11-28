@@ -5,7 +5,19 @@ import Login from "./pages/Login";
 import Customers from "./pages/Customers";
 import Attendance from "./pages/Attendance";
 import PublicSearch from "./pages/PublicSearch";
-import Dashboard from "./pages/Dashboard";
+
+// Placeholder for Dashboard
+function Dashboard() {
+  const { logout } = useAuth();
+  return (
+    <div className="p-4">
+      <h1 className="text-2xl font-bold mb-4">डॅशबोर्ड (Dashboard)</h1>
+      <button onClick={logout} className="bg-red-500 text-white px-4 py-2 rounded">
+        बाहेर पडा (Logout)
+      </button>
+    </div>
+  );
+}
 
 function PrivateRoute({ children }) {
   const { currentUser } = useAuth();
@@ -18,9 +30,9 @@ function App() {
       <AuthProvider>
         <Routes>
           <Route path="/login" element={<Login />} />
-          <Route path="/" element={<PublicSearch />} />
+          <Route path="/search" element={<PublicSearch />} />
           <Route
-            path="/dashboard"
+            path="/"
             element={
               <PrivateRoute>
                 <Dashboard />

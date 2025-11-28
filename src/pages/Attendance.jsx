@@ -90,7 +90,7 @@ export default function Attendance() {
       <div className="mb-6">
         <h1 className="text-2xl font-semibold text-gray-900">उपस्थिती (Attendance)</h1>
         <p className="mt-1 text-sm text-gray-500">
-          आजची तारीख: {new Date().toLocaleDateString('en-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
+          आजची तारीख: {new Date().toLocaleDateString('mr-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
       </div>
 

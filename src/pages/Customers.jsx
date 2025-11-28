@@ -170,10 +170,10 @@ export default function Customers() {
                         {person.mobile}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {person.startDate.toDate().toLocaleDateString('en-IN')}
+                        {person.startDate.toDate().toLocaleDateString('mr-IN')}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
-                        {person.endDate.toDate().toLocaleDateString('en-IN')}
+                        {person.endDate.toDate().toLocaleDateString('mr-IN')}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${

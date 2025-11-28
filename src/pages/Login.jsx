@@ -13,7 +13,7 @@ export default function Login() {
       setError("");
       setLoading(true);
       await loginWithGoogle();
-      navigate("/dashboard");
+      navigate("/");
     } catch (err) {
       console.error(err);
       setError("लॉगिन करण्यात अयशस्वी. कृपया पुन्हा प्रयत्न करा."); // Failed to login. Please try again.
