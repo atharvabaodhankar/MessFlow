@@ -30,7 +30,10 @@ export default function Customers() {
   
   // Form State
   const [name, setName] = useState("");
-  // ... other state ...
+  const [mobile, setMobile] = useState("");
+  const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
+  const [selectedPlanId, setSelectedPlanId] = useState("");
+  const [customerNumber, setCustomerNumber] = useState("");
 
   useEffect(() => {
     if (currentUser) {
