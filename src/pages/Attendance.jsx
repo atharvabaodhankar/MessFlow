@@ -46,14 +46,14 @@ export default function Attendance() {
       try {
         const lowerQuery = searchQuery.toLowerCase();
         
-        // 1. Direct match (English/Marathi exact match)
+        // 1. Direct match (Number, English Name, Mobile)
         let matches = customers.filter(c => 
+          (c.customerNumber && c.customerNumber.toString() === lowerQuery) || // Exact match for number
           c.name.toLowerCase().includes(lowerQuery) || 
           c.mobile.includes(lowerQuery)
         );
 
         // 2. If no direct matches, try translating Marathi query to English
-        // Simple heuristic: if query has non-ascii chars, it might be Marathi
         const hasNonAscii = /[^\x00-\x7F]/.test(searchQuery);
         
         if (hasNonAscii) {
@@ -78,9 +78,9 @@ export default function Attendance() {
         setFilteredCustomers(matches);
       } catch (err) {
         console.error("Search error", err);
-        // Fallback to basic filtering
         setFilteredCustomers(
           customers.filter(c => 
+            (c.customerNumber && c.customerNumber.toString() === searchQuery) ||
             c.name.toLowerCase().includes(searchQuery.toLowerCase()) || 
             c.mobile.includes(searchQuery)
           )
@@ -106,6 +106,9 @@ export default function Attendance() {
         id: doc.id,
         ...doc.data()
       }));
+      // Sort by number
+      customerList.sort((a, b) => (a.customerNumber || 0) - (b.customerNumber || 0));
+      
       setCustomers(customerList);
       setFilteredCustomers(customerList);
 
@@ -191,7 +194,7 @@ export default function Attendance() {
               <input
                 type="text"
                 className="block w-full rounded-md border-gray-300 pl-10 focus:border-rose-500 focus:ring-rose-500 sm:text-sm py-2"
-                placeholder="नाव किंवा मोबाईल नंबर शोधा (मराठीत टाईप करा...)"
+                placeholder="क्रमांक, नाव किंवा मोबाईल नंबर शोधा..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -205,7 +208,7 @@ export default function Attendance() {
               )}
             </div>
             <p className="mt-1 text-xs text-gray-500">
-              तुम्ही मराठीत नाव टाईप करू शकता (उदा. "अथर्व"), आम्ही ते इंग्रजीत शोधू.
+              तुम्ही ग्राहक क्रमांक (उदा. 1, 2) टाकून थेट शोधू शकता.
             </p>
           </div>
 
@@ -218,6 +221,9 @@ export default function Attendance() {
                     <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
                       <div className="truncate">
                         <div className="flex text-sm">
+                          <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-100 text-xs font-bold text-gray-600 mr-2">
+                            {customer.customerNumber || "-"}
+                          </span>
                           <p className="font-medium text-indigo-600 truncate">{customer.name}</p>
                           <p className="ml-1 flex-shrink-0 font-normal text-gray-500">
                             ({customer.mobile})

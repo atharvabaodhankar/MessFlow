@@ -10,7 +10,9 @@ import {
   doc, 
   query, 
   where,
-  Timestamp 
+  Timestamp,
+  orderBy,
+  limit
 } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
 import { PlusIcon, PencilIcon, TrashIcon } from "@heroicons/react/24/outline";
@@ -28,6 +30,7 @@ export default function Customers() {
   const [mobile, setMobile] = useState("");
   const [startDate, setStartDate] = useState(new Date().toISOString().split('T')[0]);
   const [selectedPlanId, setSelectedPlanId] = useState("");
+  const [customerNumber, setCustomerNumber] = useState(""); // New field
 
   useEffect(() => {
     if (currentUser) {
@@ -44,6 +47,8 @@ export default function Customers() {
         id: doc.id,
         ...doc.data()
       }));
+      // Sort by customerNumber if available, else by name
+      customerList.sort((a, b) => (a.customerNumber || 0) - (b.customerNumber || 0));
       setCustomers(customerList);
 
       // Fetch Plans
@@ -60,6 +65,13 @@ export default function Customers() {
     } finally {
       setLoading(false);
     }
+  }
+
+  async function getNextCustomerNumber() {
+    // Simple client-side calculation based on current list
+    // In a high-concurrency app, use a transaction or cloud function
+    const maxNum = customers.reduce((max, c) => Math.max(max, c.customerNumber || 0), 0);
+    return maxNum + 1;
   }
 
   async function handleSubmit(e) {
@@ -81,7 +93,8 @@ export default function Customers() {
         updatedAt: Timestamp.now(),
         planId: selectedPlan ? selectedPlan.id : null,
         planName: selectedPlan ? selectedPlan.name : null,
-        planPrice: selectedPlan ? selectedPlan.price : null
+        planPrice: selectedPlan ? selectedPlan.price : null,
+        customerNumber: Number(customerNumber) // Save as number
       };
 
       if (editingCustomer) {
@@ -111,19 +124,22 @@ export default function Customers() {
     }
   }
 
-  function openModal(customer = null) {
+  async function openModal(customer = null) {
     if (customer) {
       setEditingCustomer(customer);
       setName(customer.name);
       setMobile(customer.mobile);
       setStartDate(customer.startDate.toDate().toISOString().split('T')[0]);
       setSelectedPlanId(customer.planId || "");
+      setCustomerNumber(customer.customerNumber || "");
     } else {
       setEditingCustomer(null);
       setName("");
       setMobile("");
       setStartDate(new Date().toISOString().split('T')[0]);
       setSelectedPlanId("");
+      const nextNum = await getNextCustomerNumber();
+      setCustomerNumber(nextNum);
     }
     setIsModalOpen(true);
   }
@@ -161,6 +177,9 @@ export default function Customers() {
                 <thead className="bg-gray-50">
                   <tr>
                     <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                      #
+                    </th>
+                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
                       नाव
                     </th>
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
@@ -186,6 +205,9 @@ export default function Customers() {
                 <tbody className="divide-y divide-gray-200 bg-white">
                   {customers.map((person) => (
                     <tr key={person.id}>
+                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-bold text-gray-900 sm:pl-6">
+                        {person.customerNumber || "-"}
+                      </td>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                         {person.name}
                       </td>
@@ -245,6 +267,20 @@ export default function Customers() {
                   {editingCustomer ? "ग्राहक संपादित करा" : "नवीन ग्राहक जोडा"}
                 </h3>
                 <form onSubmit={handleSubmit} className="mt-5 space-y-4">
+                  <div>
+                    <label htmlFor="customerNumber" className="block text-sm font-medium text-gray-700">
+                      ग्राहक क्रमांक (Number)
+                    </label>
+                    <input
+                      type="number"
+                      name="customerNumber"
+                      id="customerNumber"
+                      required
+                      value={customerNumber}
+                      onChange={(e) => setCustomerNumber(e.target.value)}
+                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2 bg-gray-100"
+                    />
+                  </div>
                   <div>
                     <label htmlFor="name" className="block text-sm font-medium text-gray-700">
                       नाव
