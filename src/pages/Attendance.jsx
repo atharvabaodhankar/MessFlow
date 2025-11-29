@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import Layout from "../components/Layout";
-import { QRCodeSVG } from "qrcode.react";
 import { db } from "../firebase";
 import { 
   collection, 
@@ -19,7 +18,7 @@ import { doc, updateDoc, increment, getDoc } from "firebase/firestore";
 export default function Attendance() {
   const { currentUser } = useAuth();
   const { isMarathi } = useLanguage();
-  const [activeTab, setActiveTab] = useState("manual"); // manual, qr
+  // const [activeTab, setActiveTab] = useState("manual"); // Removed QR tab
   const [customers, setCustomers] = useState([]);
   const [filteredCustomers, setFilteredCustomers] = useState([]);
   const [attendanceToday, setAttendanceToday] = useState({});
@@ -205,35 +204,11 @@ export default function Attendance() {
         <p className="mt-1 text-sm text-gray-500">
           आजची तारीख: {new Date().toLocaleDateString('mr-IN', { weekday: 'long', year: 'numeric', month: 'long', day: 'numeric' })}
         </p>
-      </div>
 
-      <div className="border-b border-gray-200 mb-6">
-        <nav className="-mb-px flex space-x-8">
-          <button
-            onClick={() => setActiveTab("manual")}
-            className={`${
-              activeTab === "manual"
-                ? "border-[#0F4C3A] text-[#0F4C3A]"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-          >
-            मॅन्युअल उपस्थिती
-          </button>
-          <button
-            onClick={() => setActiveTab("qr")}
-            className={`${
-              activeTab === "qr"
-                ? "border-[#0F4C3A] text-[#0F4C3A]"
-                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
-            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
-          >
-            QR कोड
-          </button>
-        </nav>
-      </div>
 
-      {activeTab === "manual" && (
-        <div className="bg-white shadow overflow-hidden sm:rounded-md">
+
+
+      <div className="bg-white shadow overflow-hidden sm:rounded-md">
           {/* Search Bar */}
           <div className="p-4 border-b border-gray-200 bg-gray-50">
             <div className="relative rounded-md shadow-sm max-w-lg">
@@ -327,26 +302,7 @@ export default function Attendance() {
             )}
           </ul>
         </div>
-      )}
-
-      {activeTab === "qr" && (
-        <div className="flex flex-col items-center justify-center py-12 bg-white shadow rounded-lg">
-          <h3 className="text-lg font-medium text-gray-900 mb-4">आजचा QR कोड स्कॅन करा</h3>
-          <div className="p-4 bg-white border-2 border-gray-900 rounded-lg">
-            <QRCodeSVG 
-              value={JSON.stringify({
-                messId: currentUser?.uid,
-                date: today,
-                type: "attendance"
-              })}
-              size={256}
-            />
-          </div>
-          <p className="mt-4 text-sm text-gray-500">
-            ग्राहकांना हा कोड स्कॅन करण्यास सांगा.
-          </p>
         </div>
-      )}
     </Layout>
   );
 }
