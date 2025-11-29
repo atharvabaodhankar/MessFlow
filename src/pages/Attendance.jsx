@@ -243,13 +243,22 @@ export default function Attendance() {
                 <li key={customer.id}>
                   <div className="px-4 py-4 flex items-center sm:px-6">
                     <div className="min-w-0 flex-1 sm:flex sm:items-center sm:justify-between">
-                      <div className="truncate">
-                        <div className="flex text-sm">
+                      <div className="overflow-x-auto" style={{ 
+                        scrollbarWidth: 'none', 
+                        msOverflowStyle: 'none',
+                        WebkitOverflowScrolling: 'touch'
+                      }}>
+                        <style>{`
+                          .overflow-x-auto::-webkit-scrollbar {
+                            display: none;
+                          }
+                        `}</style>
+                        <div className="flex text-sm" style={{ minWidth: 'max-content' }}>
                           <span className="inline-flex items-center justify-center h-6 w-6 rounded-full bg-gray-100 text-xs font-bold text-gray-600 mr-2">
                             {customer.customerNumber || "-"}
                           </span>
                           <div className="flex flex-col">
-                            <p className="font-medium text-[#0F4C3A] truncate">
+                            <p className="font-bold text-[#0F4C3A] truncate">
                               {isMarathi ? (customer.nameMarathi || customer.name) : customer.name}
                             </p>
                             {isMarathi && customer.nameMarathi && customer.nameMarathi !== customer.name && (
