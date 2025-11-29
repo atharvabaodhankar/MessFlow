@@ -49,11 +49,11 @@ export default function PublicSearch() {
   }
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-[#E8F3EF] via-[#FAFAF7] to-[#F5E6C3] flex flex-col justify-center py-12 sm:px-6 lg:px-8">
+    <div className="min-h-screen bg-gradient-to-br from-[#E8F3EF] via-[#FAFAF7] to-[#F5E6C3] flex flex-col justify-center py-8 px-4 sm:py-12 sm:px-6 lg:px-8">
       {/* Language Toggle Button */}
       <button
         onClick={toggleLanguage}
-        className="fixed top-6 right-6 z-50 flex items-center gap-2 bg-white hover:bg-[#E8F3EF] text-[#0F4C3A] font-semibold px-4 py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-[#0F4C3A]/10 hover:border-[#0F4C3A]/30"
+        className="fixed top-4 right-4 sm:top-6 sm:right-6 z-50 flex items-center gap-2 bg-white hover:bg-[#E8F3EF] text-[#0F4C3A] font-semibold px-3 py-2 sm:px-4 sm:py-2.5 rounded-xl shadow-lg hover:shadow-xl transition-all duration-200 border-2 border-[#0F4C3A]/10 hover:border-[#0F4C3A]/30"
         aria-label="Toggle Language"
       >
         <span className="material-icons-outlined text-lg">language</span>
@@ -68,18 +68,18 @@ export default function PublicSearch() {
             className="h-20 w-auto"
           />
         </div>
-        <h2 className="mt-6 text-center text-4xl font-bold tracking-tight text-[#073327]">
+        <h2 className="mt-4 sm:mt-6 text-center text-2xl sm:text-3xl md:text-4xl font-bold tracking-tight text-[#073327]">
           {isMarathi ? "मेस सबस्क्रिप्शन तपासा" : "Check Mess Subscription"}
         </h2>
-        <p className="mt-3 text-center text-base text-[#2E2E2E]">
+        <p className="mt-2 sm:mt-3 text-center text-sm sm:text-base text-[#2E2E2E] px-4">
           {isMarathi 
             ? "तुमचा मोबाईल नंबर टाकून तुमच्या मेसची माहिती मिळवा"
             : "Enter your mobile number to get your mess information"}
         </p>
       </div>
 
-      <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md">
-        <div className="bg-white py-10 px-6 shadow-xl sm:rounded-2xl sm:px-12 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
+      <div className="mt-6 sm:mt-10 mx-auto w-full max-w-md">
+        <div className="bg-white py-8 px-6 shadow-xl rounded-2xl sm:py-10 sm:px-12 border border-gray-100 hover:shadow-2xl transition-shadow duration-300">
           <form className="space-y-6" onSubmit={handleSearch}>
             <div>
               <label htmlFor="mobile" className="block text-sm font-semibold text-[#073327] mb-2">
