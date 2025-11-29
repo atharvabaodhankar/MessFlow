@@ -61,6 +61,13 @@ export default function PublicSearch() {
       </button>
 
       <div className="sm:mx-auto sm:w-full sm:max-w-md">
+        <div className="flex justify-center mb-6">
+          <img 
+            src="/logo.png" 
+            alt="MessFlow Logo" 
+            className="h-20 w-auto"
+          />
+        </div>
         <h2 className="mt-6 text-center text-4xl font-bold tracking-tight text-[#073327]">
           {isMarathi ? "मेस सबस्क्रिप्शन तपासा" : "Check Mess Subscription"}
         </h2>
