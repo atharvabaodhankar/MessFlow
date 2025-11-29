@@ -24,6 +24,7 @@ export default function Plans() {
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
   const [totalMeals, setTotalMeals] = useState("");
+  const [isUnlimited, setIsUnlimited] = useState(false);
   const [validityDays, setValidityDays] = useState("");
   const [description, setDescription] = useState("");
 
@@ -85,6 +86,7 @@ export default function Plans() {
     setName("");
     setPrice("");
     setTotalMeals("");
+    setIsUnlimited(false);
     setValidityDays("");
     setDescription("");
   }
@@ -199,20 +201,40 @@ export default function Plans() {
                     </div>
 
                   <div className="grid grid-cols-2 gap-4">
-                    <div>
-                      <label htmlFor="totalMeals" className="block text-sm font-medium text-gray-700">
-                        एकूण जेवण (Total Meals)
-                      </label>
-                      <input
-                        type="number"
-                        name="totalMeals"
-                        id="totalMeals"
-                        value={totalMeals}
-                        onChange={(e) => setTotalMeals(e.target.value)}
-                        className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
-                        placeholder="0 for Unlimited"
-                      />
-                    </div>
+                      <div>
+                        <div className="flex items-center justify-between mb-1">
+                          <label htmlFor="totalMeals" className="block text-sm font-medium text-gray-700">
+                            एकूण जेवण
+                          </label>
+                          <div className="flex items-center">
+                            <input
+                              id="isUnlimited"
+                              name="isUnlimited"
+                              type="checkbox"
+                              checked={isUnlimited}
+                              onChange={(e) => {
+                                setIsUnlimited(e.target.checked);
+                                if (e.target.checked) setTotalMeals("0");
+                                else setTotalMeals("");
+                              }}
+                              className="h-4 w-4 rounded border-gray-300 text-[#0F4C3A] focus:ring-[#0F4C3A]"
+                            />
+                            <label htmlFor="isUnlimited" className="ml-2 block text-xs text-gray-500">
+                              अमर्यादित (Unlimited)
+                            </label>
+                          </div>
+                        </div>
+                        <input
+                          type="number"
+                          name="totalMeals"
+                          id="totalMeals"
+                          disabled={isUnlimited}
+                          value={totalMeals}
+                          onChange={(e) => setTotalMeals(e.target.value)}
+                          className={`mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2 ${isUnlimited ? 'bg-gray-100 text-gray-500' : ''}`}
+                          placeholder={isUnlimited ? "Unlimited" : "e.g. 60"}
+                        />
+                      </div>
                     <div>
                       <label htmlFor="validityDays" className="block text-sm font-medium text-gray-700">
                         वैधता दिवस (Validity Days)
