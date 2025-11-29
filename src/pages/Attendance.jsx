@@ -49,12 +49,21 @@ export default function Attendance() {
       try {
         const lowerQuery = searchQuery.toLowerCase();
         
-        // 1. Direct match (Number, English Name, Mobile)
-        let matches = customers.filter(c => 
-          (c.customerNumber && c.customerNumber.toString() === lowerQuery) || // Exact match for number
-          c.name.toLowerCase().includes(lowerQuery) || 
-          c.mobile.includes(lowerQuery)
+        // 1. Prioritize Exact Customer Number Match
+        const exactNumberMatch = customers.find(c => 
+          c.customerNumber && c.customerNumber.toString() === lowerQuery
         );
+
+        let matches = [];
+        if (exactNumberMatch) {
+          matches = [exactNumberMatch];
+        } else {
+          // 2. If no exact number match, search Name and Mobile
+          matches = customers.filter(c => 
+            c.name.toLowerCase().includes(lowerQuery) || 
+            c.mobile.includes(lowerQuery)
+          );
+        }
 
         // 2. If no direct matches, try translating Marathi query to English
         const hasNonAscii = /[^\x00-\x7F]/.test(searchQuery);
