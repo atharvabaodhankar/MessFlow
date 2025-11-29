@@ -23,6 +23,8 @@ export default function Plans() {
   // Form State
   const [name, setName] = useState("");
   const [price, setPrice] = useState("");
+  const [totalMeals, setTotalMeals] = useState("");
+  const [validityDays, setValidityDays] = useState("");
   const [description, setDescription] = useState("");
 
   useEffect(() => {
@@ -54,6 +56,8 @@ export default function Plans() {
         messId: currentUser.uid,
         name,
         price: Number(price),
+        totalMeals: Number(totalMeals) || 0,
+        validityDays: Number(validityDays) || 30,
         description,
         createdAt: Timestamp.now()
       });
@@ -80,6 +84,8 @@ export default function Plans() {
     setIsModalOpen(false);
     setName("");
     setPrice("");
+    setTotalMeals("");
+    setValidityDays("");
     setDescription("");
   }
 
@@ -115,8 +121,16 @@ export default function Plans() {
               <a href="#" className="focus:outline-none">
                 <span className="absolute inset-0" aria-hidden="true" />
                 <p className="text-sm font-medium text-gray-900">{plan.name}</p>
-                <p className="truncate text-sm text-gray-500">₹{plan.price} / महिना</p>
-                {plan.description && <p className="truncate text-xs text-gray-400">{plan.description}</p>}
+                <p className="truncate text-sm text-gray-500">₹{plan.price}</p>
+                <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
+                  <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
+                    {plan.totalMeals ? `${plan.totalMeals} जेवण (Meals)` : "अमर्यादित (Unlimited)"}
+                  </span>
+                  <span className="bg-blue-100 text-blue-800 px-2 py-0.5 rounded-full">
+                    {plan.validityDays} दिवस (Days)
+                  </span>
+                </div>
+                {plan.description && <p className="truncate text-xs text-gray-400 mt-1">{plan.description}</p>}
               </a>
             </div>
             <button
@@ -141,9 +155,9 @@ export default function Plans() {
       {isModalOpen && (
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={closeModal}></div>
+            <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" onClick={closeModal}></div>
 
-            <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+            <div className="relative transform overflow-hidden rounded-2xl bg-white px-4 pt-5 pb-4 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 border border-gray-100">
               <div>
                 <h3 className="text-lg font-medium leading-6 text-gray-900">
                   नवीन मेस प्लॅन जोडा
@@ -180,6 +194,37 @@ export default function Plans() {
                         onChange={(e) => setPrice(e.target.value)}
                         className="block w-full rounded-xl border-gray-300 pl-7 pr-12 focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
                         placeholder="0.00"
+                      />
+                    </div>
+                    </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div>
+                      <label htmlFor="totalMeals" className="block text-sm font-medium text-gray-700">
+                        एकूण जेवण (Total Meals)
+                      </label>
+                      <input
+                        type="number"
+                        name="totalMeals"
+                        id="totalMeals"
+                        value={totalMeals}
+                        onChange={(e) => setTotalMeals(e.target.value)}
+                        className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
+                        placeholder="0 for Unlimited"
+                      />
+                    </div>
+                    <div>
+                      <label htmlFor="validityDays" className="block text-sm font-medium text-gray-700">
+                        वैधता दिवस (Validity Days)
+                      </label>
+                      <input
+                        type="number"
+                        name="validityDays"
+                        id="validityDays"
+                        value={validityDays}
+                        onChange={(e) => setValidityDays(e.target.value)}
+                        className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
+                        placeholder="30"
                       />
                     </div>
                   </div>

@@ -37,6 +37,7 @@ export default function Customers() {
   const [selectedPlanId, setSelectedPlanId] = useState("");
   const [customerNumber, setCustomerNumber] = useState("");
   const [amountPaid, setAmountPaid] = useState(0);
+  const [mealsConsumed, setMealsConsumed] = useState(0);
 
   useEffect(() => {
     if (currentUser) {
@@ -88,6 +89,13 @@ export default function Customers() {
       end.setDate(start.getDate() + 30);
 
       const selectedPlan = plans.find(p => p.id === selectedPlanId);
+      
+      // Calculate End Date based on Plan Validity
+      if (selectedPlan && selectedPlan.validityDays) {
+        end.setDate(start.getDate() + selectedPlan.validityDays);
+      } else {
+        end.setDate(start.getDate() + 30); // Default fallback
+      }
 
       const customerData = {
         name, // English name
@@ -101,6 +109,8 @@ export default function Customers() {
         planId: selectedPlan ? selectedPlan.id : null,
         planName: selectedPlan ? selectedPlan.name : null,
         planPrice: selectedPlan ? selectedPlan.price : null,
+        totalMeals: selectedPlan ? (selectedPlan.totalMeals || 0) : 0,
+        mealsConsumed: Number(mealsConsumed) || 0,
         customerNumber: Number(customerNumber),
         amountPaid: Number(amountPaid) || 0,
         remainingAmount: (selectedPlan ? selectedPlan.price : 0) - (Number(amountPaid) || 0)
@@ -145,6 +155,7 @@ export default function Customers() {
       setSelectedPlanId(customer.planId || "");
       setCustomerNumber(customer.customerNumber || "");
       setAmountPaid(customer.amountPaid || 0);
+      setMealsConsumed(customer.mealsConsumed || 0);
     } else {
       setEditingCustomer(null);
       setName("");
@@ -155,6 +166,7 @@ export default function Customers() {
       const nextNum = await getNextCustomerNumber();
       setCustomerNumber(nextNum);
       setAmountPaid(0);
+      setMealsConsumed(0);
     }
     setIsModalOpen(true);
   }
@@ -215,6 +227,9 @@ export default function Customers() {
                     <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
                       स्थिती
                     </th>
+                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                      जेवण बाकी (Meals Left)
+                    </th>
                     <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
                       <span className="sr-only">Actions</span>
                     </th>
@@ -266,6 +281,23 @@ export default function Customers() {
                         }`}>
                           {person.status === 'active' ? 'सक्रिय' : person.status === 'expiring' ? 'संपत आले' : 'संपले'}
                         </span>
+
+                      </td>
+                      <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                        {person.totalMeals > 0 ? (
+                          <div className="flex flex-col">
+                            <span className={`font-bold ${
+                              (person.totalMeals - (person.mealsConsumed || 0)) < 5 ? "text-red-600" : "text-gray-900"
+                            }`}>
+                              {person.totalMeals - (person.mealsConsumed || 0)} / {person.totalMeals}
+                            </span>
+                            <span className="text-xs text-gray-400">
+                              वापरले: {person.mealsConsumed || 0}
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-gray-500">अमर्यादित</span>
+                        )}
                       </td>
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                         <button
@@ -294,9 +326,9 @@ export default function Customers() {
       {isModalOpen && (
         <div className="fixed inset-0 z-10 overflow-y-auto">
           <div className="flex min-h-full items-end justify-center p-4 text-center sm:items-center sm:p-0">
-            <div className="fixed inset-0 bg-gray-500 bg-opacity-75 transition-opacity" onClick={closeModal}></div>
+            <div className="fixed inset-0 bg-gray-900/50 backdrop-blur-sm transition-opacity" onClick={closeModal}></div>
 
-            <div className="relative transform overflow-hidden rounded-lg bg-white px-4 pt-5 pb-4 text-left shadow-xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6">
+            <div className="relative transform overflow-hidden rounded-2xl bg-white px-4 pt-5 pb-4 text-left shadow-2xl transition-all sm:my-8 sm:w-full sm:max-w-lg sm:p-6 border border-gray-100">
               <div>
                 <h3 className="text-lg font-medium leading-6 text-gray-900">
                   {editingCustomer ? "ग्राहक संपादित करा" : "नवीन ग्राहक जोडा"}
@@ -414,6 +446,27 @@ export default function Customers() {
                       </p>
                     )}
                   </div>
+                  
+                  {/* Meals Consumed Input for Migration */}
+                  <div>
+                    <label htmlFor="mealsConsumed" className="block text-sm font-medium text-gray-700">
+                      वापरलेले जेवण (Meals Consumed) - जुन्या ग्राहकांसाठी
+                    </label>
+                    <input
+                      type="number"
+                      name="mealsConsumed"
+                      id="mealsConsumed"
+                      min="0"
+                      value={mealsConsumed}
+                      onChange={(e) => setMealsConsumed(e.target.value)}
+                      className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
+                      placeholder="0"
+                    />
+                    <p className="mt-1 text-xs text-gray-500">
+                      जर हा नवीन ग्राहक असेल तर 0 ठेवा. जर जुना असेल तर आतापर्यंत झालेले जेवण टाका.
+                    </p>
+                  </div>
+
                   <div className="mt-5 sm:mt-6 sm:grid sm:grid-flow-row-dense sm:grid-cols-2 sm:gap-3">
                     <button
                       type="submit"

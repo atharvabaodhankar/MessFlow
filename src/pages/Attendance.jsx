@@ -12,8 +12,9 @@ import {
 } from "firebase/firestore";
 import { useAuth } from "../contexts/AuthContext";
 import { useLanguage } from "../contexts/LanguageContext";
-import { CheckCircleIcon, MagnifyingGlassIcon } from "@heroicons/react/24/solid";
+import { CheckCircleIcon, MagnifyingGlassIcon, ExclamationTriangleIcon } from "@heroicons/react/24/solid";
 import { translateMRtoEN } from "../utils/translator";
+import { doc, updateDoc, increment, getDoc } from "firebase/firestore";
 
 export default function Attendance() {
   const { currentUser } = useAuth();
@@ -137,17 +138,54 @@ export default function Attendance() {
     try {
       if (attendanceToday[customerId]) return;
 
-      await addDoc(collection(db, "attendance"), {
-        messId: currentUser.uid,
-        customerId: customerId,
-        date: today,
-        timestamp: Timestamp.now(),
-        method: "manual"
-      });
+      const customerRef = doc(db, "customers", customerId);
+      const customerSnap = await getDoc(customerRef);
+      
+      if (customerSnap.exists()) {
+        const customerData = customerSnap.data();
+        
+        // Check Validity
+        const todayDate = new Date(today);
+        const endDate = customerData.endDate.toDate();
+        if (todayDate > endDate) {
+          alert(isMarathi ? "या ग्राहकाची वैधता संपली आहे!" : "This customer's plan has expired!");
+          return;
+        }
 
-      setAttendanceToday(prev => ({ ...prev, [customerId]: true }));
+        // Check Meals Limit
+        if (customerData.totalMeals > 0 && (customerData.mealsConsumed || 0) >= customerData.totalMeals) {
+          alert(isMarathi ? "या ग्राहकाचे सर्व जेवण संपले आहेत!" : "This customer has consumed all their meals!");
+          return;
+        }
+
+        // Mark Attendance
+        await addDoc(collection(db, "attendance"), {
+          messId: currentUser.uid,
+          customerId: customerId,
+          date: today,
+          timestamp: Timestamp.now(),
+          method: "manual"
+        });
+
+        // Increment Meals Consumed
+        await updateDoc(customerRef, {
+          mealsConsumed: increment(1)
+        });
+
+        // Update local state
+        setAttendanceToday(prev => ({ ...prev, [customerId]: true }));
+        
+        // Update customer list locally to reflect new meal count
+        setCustomers(prev => prev.map(c => {
+          if (c.id === customerId) {
+            return { ...c, mealsConsumed: (c.mealsConsumed || 0) + 1 };
+          }
+          return c;
+        }));
+      }
     } catch (error) {
       console.error("Error marking attendance:", error);
+      alert("Error marking attendance. Please try again.");
     }
   }
 
@@ -240,6 +278,17 @@ export default function Attendance() {
                           <p className="ml-1 flex-shrink-0 font-normal text-gray-500 self-center">
                             ({customer.mobile})
                           </p>
+                          {customer.totalMeals > 0 && (
+                            <div className="ml-2 flex items-center">
+                              <span className={`text-xs px-2 py-0.5 rounded-full ${
+                                (customer.totalMeals - (customer.mealsConsumed || 0)) < 5 
+                                  ? "bg-red-100 text-red-800" 
+                                  : "bg-green-100 text-green-800"
+                              }`}>
+                                {customer.totalMeals - (customer.mealsConsumed || 0)} जेवण बाकी
+                              </span>
+                            </div>
+                          )}
                         </div>
                       </div>
                     </div>
