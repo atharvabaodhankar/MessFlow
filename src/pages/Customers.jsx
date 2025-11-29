@@ -38,6 +38,7 @@ export default function Customers() {
   const [customerNumber, setCustomerNumber] = useState("");
   const [amountPaid, setAmountPaid] = useState(0);
   const [mealsConsumed, setMealsConsumed] = useState(0);
+  const [activeTab, setActiveTab] = useState("all"); // all, expiring, lowMeals
 
   useEffect(() => {
     if (currentUser) {
@@ -196,6 +197,33 @@ export default function Customers() {
         </div>
       </div>
 
+
+
+      <div className="border-b border-gray-200 mb-6">
+        <nav className="-mb-px flex space-x-8">
+          <button
+            onClick={() => setActiveTab("all")}
+            className={`${
+              activeTab === "all"
+                ? "border-[#0F4C3A] text-[#0F4C3A]"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+          >
+            {isMarathi ? "सर्व ग्राहक" : "All Customers"}
+          </button>
+          <button
+            onClick={() => setActiveTab("expiring")}
+            className={`${
+              activeTab === "expiring"
+                ? "border-[#ECC94B] text-[#ECC94B]"
+                : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
+            } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
+          >
+            {isMarathi ? "लवकरच संपणारे (Expiring / Low Meals)" : "Expiring / Low Meals"}
+          </button>
+        </nav>
+      </div>
+
       <div className="mt-8 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
@@ -236,7 +264,23 @@ export default function Customers() {
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-gray-200 bg-white">
-                  {customers.map((person) => (
+                  {customers.filter(person => {
+                    if (activeTab === "all") return true;
+                    if (activeTab === "expiring") {
+                      const daysLeft = Math.ceil((person.endDate.toDate() - new Date()) / (1000 * 60 * 60 * 24));
+                      const mealsLeft = person.totalMeals > 0 ? person.totalMeals - (person.mealsConsumed || 0) : null;
+                      
+                      const isDateExpiring = daysLeft <= 5;
+                      const isMealsLow = mealsLeft !== null && mealsLeft <= 5;
+                      
+                      return (isDateExpiring || isMealsLow) && person.status === 'active';
+                    }
+                    return true;
+                  }).map((person) => {
+                    const daysLeft = Math.ceil((person.endDate.toDate() - new Date()) / (1000 * 60 * 60 * 24));
+                    const mealsLeft = person.totalMeals > 0 ? person.totalMeals - (person.mealsConsumed || 0) : null;
+                    
+                    return (
                     <tr key={person.id}>
                       <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-bold text-gray-900 sm:pl-6">
                         {person.customerNumber || "-"}
@@ -281,16 +325,27 @@ export default function Customers() {
                         }`}>
                           {person.status === 'active' ? 'सक्रिय' : person.status === 'expiring' ? 'संपत आले' : 'संपले'}
                         </span>
-
+                        {daysLeft <= 5 && person.status === 'active' && (
+                          <span className="ml-2 inline-flex items-center rounded-full bg-yellow-100 px-2 py-0.5 text-xs font-medium text-yellow-800">
+                            {daysLeft} दिवस बाकी
+                          </span>
+                        )}
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         {person.totalMeals > 0 ? (
                           <div className="flex flex-col">
-                            <span className={`font-bold ${
-                              (person.totalMeals - (person.mealsConsumed || 0)) < 5 ? "text-red-600" : "text-gray-900"
-                            }`}>
-                              {person.totalMeals - (person.mealsConsumed || 0)} / {person.totalMeals}
-                            </span>
+                            <div className="flex items-center">
+                              <span className={`font-bold ${
+                                mealsLeft <= 5 ? "text-red-600" : "text-gray-900"
+                              }`}>
+                                {mealsLeft} / {person.totalMeals}
+                              </span>
+                              {mealsLeft <= 5 && (
+                                <span className="ml-2 inline-flex items-center rounded-full bg-red-100 px-2 py-0.5 text-xs font-medium text-red-800">
+                                  कमी
+                                </span>
+                              )}
+                            </div>
                             <span className="text-xs text-gray-400">
                               वापरले: {person.mealsConsumed || 0}
                             </span>
@@ -314,7 +369,8 @@ export default function Customers() {
                         </button>
                       </td>
                     </tr>
-                  ))}
+                    );
+                  })}
                 </tbody>
               </table>
             </div>
