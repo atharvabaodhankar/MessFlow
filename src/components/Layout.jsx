@@ -34,6 +34,7 @@ export default function Layout({ children }) {
     { nameMr: "ग्राहक", nameEn: "Customers", href: "/customers", icon: "groups" },
     { nameMr: "उपस्थिती", nameEn: "Attendance", href: "/attendance", icon: "checklist" },
     { nameMr: "प्लॅन्स", nameEn: "Plans", href: "/plans", icon: "receipt_long" },
+    { nameMr: "विश्लेषण", nameEn: "Analytics", href: "/analytics", icon: "analytics" },
   ];
 
   async function handleLogout() {
