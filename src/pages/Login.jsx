@@ -123,6 +123,15 @@ export default function Login() {
             : (isMarathi ? "Google ने लॉगिन करा" : "Login with Google")}
         </button>
 
+        <div className="mt-6 text-center">
+          <a href="/" className="text-sm font-semibold text-[#0F4C3A] hover:text-[#073327] flex items-center justify-center gap-1.5 group transition-colors">
+            <span className="material-icons-outlined text-base group-hover:-translate-x-1 transition-transform">arrow_back</span>
+            <span>
+              {isMarathi ? "सार्वजनिक शोध पृष्ठावर परत जा" : "Back to Public Search"}
+            </span>
+          </a>
+        </div>
+
         {/* Mess Name Modal */}
         {showMessNameModal && (
           <div className="fixed inset-0 z-50 overflow-y-auto bg-gray-900/50 backdrop-blur-sm flex items-center justify-center p-4">
