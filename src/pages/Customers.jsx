@@ -176,7 +176,7 @@ export default function Customers() {
         <div className="mt-4 sm:mt-0 sm:ml-16 sm:flex-none">
           <button
             onClick={() => openModal()}
-            className="inline-flex items-center justify-center rounded-md border border-transparent bg-rose-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 sm:w-auto"
+            className="inline-flex items-center justify-center rounded-xl border border-transparent bg-[#0F4C3A] px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-[#073327] focus:outline-none focus:ring-2 focus:ring-[#0F4C3A] focus:ring-offset-2 sm:w-auto transition-colors"
           >
             <PlusIcon className="-ml-1 mr-2 h-5 w-5" />
             नवीन ग्राहक जोडा
@@ -254,15 +254,15 @@ export default function Customers() {
                             <span className="text-xs text-red-600">बाकी: ₹{person.remainingAmount}</span>
                           )}
                           {person.remainingAmount === 0 && person.planPrice > 0 && (
-                            <span className="text-xs text-green-600">पूर्ण भरलेले</span>
+                            <span className="text-xs text-[#38A169]">पूर्ण भरलेले</span>
                           )}
                         </div>
                       </td>
                       <td className="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
                         <span className={`inline-flex rounded-full px-2 text-xs font-semibold leading-5 ${
-                          person.status === 'active' ? 'bg-green-100 text-green-800' : 
-                          person.status === 'expiring' ? 'bg-yellow-100 text-yellow-800' : 
-                          'bg-red-100 text-red-800'
+                          person.status === 'active' ? 'bg-[#38A169]/10 text-[#38A169]' : 
+                          person.status === 'expiring' ? 'bg-[#ECC94B]/10 text-[#ECC94B]' : 
+                          'bg-[#E53E3E]/10 text-[#E53E3E]'
                         }`}>
                           {person.status === 'active' ? 'सक्रिय' : person.status === 'expiring' ? 'संपत आले' : 'संपले'}
                         </span>
@@ -270,7 +270,7 @@ export default function Customers() {
                       <td className="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
                         <button
                           onClick={() => openModal(person)}
-                          className="text-indigo-600 hover:text-indigo-900 mr-4"
+                          className="text-[#0F4C3A] hover:text-[#073327] mr-4"
                         >
                           <PencilIcon className="h-5 w-5" />
                         </button>
@@ -313,7 +313,7 @@ export default function Customers() {
                       required
                       value={customerNumber}
                       onChange={(e) => setCustomerNumber(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2 bg-gray-100"
+                      className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2 bg-gray-100"
                     />
                   </div>
                   <div>
@@ -327,7 +327,7 @@ export default function Customers() {
                       required
                       value={name}
                       onChange={(e) => setName(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                      className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
                       placeholder="उदा: Atharva Baodhankar"
                     />
                   </div>
@@ -341,7 +341,7 @@ export default function Customers() {
                       id="nameMarathi"
                       value={nameMarathi}
                       onChange={(e) => setNameMarathi(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                      className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
                       placeholder="उदा: अथर्व बाओधनकर"
                     />
                     <p className="mt-1 text-xs text-gray-500">वैकल्पिक - रिक्त असल्यास इंग्रजी नाव वापरले जाईल</p>
@@ -357,7 +357,7 @@ export default function Customers() {
                       required
                       value={mobile}
                       onChange={(e) => setMobile(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                      className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
                     />
                   </div>
                   <div>
@@ -369,7 +369,7 @@ export default function Customers() {
                       name="plan"
                       value={selectedPlanId}
                       onChange={(e) => setSelectedPlanId(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                      className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
                     >
                       <option value="">-- प्लॅन निवडा --</option>
                       {plans.map((plan) => (
@@ -390,7 +390,7 @@ export default function Customers() {
                       required
                       value={startDate}
                       onChange={(e) => setStartDate(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                      className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
                     />
                   </div>
                   <div>
@@ -404,7 +404,7 @@ export default function Customers() {
                       min="0"
                       value={amountPaid}
                       onChange={(e) => setAmountPaid(e.target.value)}
-                      className="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-rose-500 focus:ring-rose-500 sm:text-sm border p-2"
+                      className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
                       placeholder="0"
                     />
                     {selectedPlanId && plans.find(p => p.id === selectedPlanId) && (
@@ -418,14 +418,14 @@ export default function Customers() {
                     <button
                       type="submit"
                       disabled={isSaving}
-                      className="inline-flex w-full justify-center rounded-md border border-transparent bg-rose-600 px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 sm:col-start-2 sm:text-sm disabled:opacity-50"
+                      className="inline-flex w-full justify-center rounded-xl border border-transparent bg-[#0F4C3A] px-4 py-2 text-base font-medium text-white shadow-sm hover:bg-[#073327] focus:outline-none focus:ring-2 focus:ring-[#0F4C3A] focus:ring-offset-2 sm:col-start-2 sm:text-sm disabled:opacity-50 transition-colors"
                     >
                       {isSaving ? "जतन करत आहे..." : "जतन करा"}
                     </button>
                     <button
                       type="button"
                       onClick={closeModal}
-                      className="mt-3 inline-flex w-full justify-center rounded-md border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm"
+                      className="mt-3 inline-flex w-full justify-center rounded-xl border border-gray-300 bg-white px-4 py-2 text-base font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-[#0F4C3A] focus:ring-offset-2 sm:col-start-1 sm:mt-0 sm:text-sm transition-colors"
                     >
                       रद्द करा
                     </button>

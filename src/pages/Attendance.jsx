@@ -166,7 +166,7 @@ export default function Attendance() {
             onClick={() => setActiveTab("manual")}
             className={`${
               activeTab === "manual"
-                ? "border-rose-500 text-rose-600"
+                ? "border-[#0F4C3A] text-[#0F4C3A]"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
@@ -176,7 +176,7 @@ export default function Attendance() {
             onClick={() => setActiveTab("qr")}
             className={`${
               activeTab === "qr"
-                ? "border-rose-500 text-rose-600"
+                ? "border-[#0F4C3A] text-[#0F4C3A]"
                 : "border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300"
             } whitespace-nowrap py-4 px-1 border-b-2 font-medium text-sm`}
           >
@@ -195,14 +195,14 @@ export default function Attendance() {
               </div>
               <input
                 type="text"
-                className="block w-full rounded-md border-gray-300 pl-10 focus:border-rose-500 focus:ring-rose-500 sm:text-sm py-2"
+                className="block w-full rounded-xl border-gray-300 pl-10 focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm py-2"
                 placeholder="क्रमांक, नाव किंवा मोबाईल नंबर शोधा..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
               {isSearching && (
                 <div className="absolute inset-y-0 right-0 flex items-center pr-3">
-                  <svg className="animate-spin h-5 w-5 text-rose-500" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                  <svg className="animate-spin h-5 w-5 text-[#0F4C3A]" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
                     <circle className="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" strokeWidth="4"></circle>
                     <path className="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
                   </svg>
@@ -227,7 +227,7 @@ export default function Attendance() {
                             {customer.customerNumber || "-"}
                           </span>
                           <div className="flex flex-col">
-                            <p className="font-medium text-indigo-600 truncate">
+                            <p className="font-medium text-[#0F4C3A] truncate">
                               {isMarathi ? (customer.nameMarathi || customer.name) : customer.name}
                             </p>
                             {isMarathi && customer.nameMarathi && customer.nameMarathi !== customer.name && (
@@ -252,7 +252,7 @@ export default function Attendance() {
                       ) : (
                         <button
                           onClick={() => markAttendance(customer.id)}
-                          className="inline-flex items-center rounded-md border border-transparent bg-rose-600 px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-rose-700 focus:outline-none focus:ring-2 focus:ring-rose-500 focus:ring-offset-2"
+                          className="inline-flex items-center rounded-xl border border-transparent bg-[#0F4C3A] px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-[#073327] focus:outline-none focus:ring-2 focus:ring-[#0F4C3A] focus:ring-offset-2 transition-colors"
                         >
                           हजर करा
                         </button>

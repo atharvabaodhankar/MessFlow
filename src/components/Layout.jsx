@@ -2,12 +2,32 @@ import React, { useState } from "react";
 import { Link, useLocation } from "react-router-dom";
 import { useAuth } from "../contexts/AuthContext";
 import { useLanguage } from "../contexts/LanguageContext";
+import { db } from "../firebase";
+import { doc, getDoc } from "firebase/firestore";
 
 export default function Layout({ children }) {
-  const { logout } = useAuth();
+  const { currentUser, logout } = useAuth();
   const { language, toggleLanguage, isMarathi } = useLanguage();
   const location = useLocation();
   const [sidebarOpen, setSidebarOpen] = useState(false);
+  const [messName, setMessName] = useState("");
+
+  React.useEffect(() => {
+    async function fetchMessName() {
+      if (currentUser) {
+        try {
+          const docRef = doc(db, "messOwners", currentUser.uid);
+          const docSnap = await getDoc(docRef);
+          if (docSnap.exists()) {
+            setMessName(docSnap.data().messName);
+          }
+        } catch (error) {
+          console.error("Error fetching mess name:", error);
+        }
+      }
+    }
+    fetchMessName();
+  }, [currentUser]);
 
   const navigation = [
     { nameMr: "डॅशबोर्ड", nameEn: "Dashboard", href: "/dashboard", icon: "home" },
@@ -29,8 +49,12 @@ export default function Layout({ children }) {
       {/* Desktop Sidebar */}
       <aside className="hidden md:flex md:w-64 md:flex-col bg-white border-r border-gray-200">
         {/* Logo */}
-        <div className="h-20 flex items-center justify-center border-b border-[#E8F3EF]">
-          <h1 className="text-2xl font-bold text-[#0F4C3A]">मेसफ्लो (MessFlow)</h1>
+        {/* Logo */}
+        
+        <div className="h-20 flex items-center justify-center border-b border-[#E8F3EF] px-4">
+          <h1 className="text-xl font-bold text-[#0F4C3A] text-center truncate">
+            {messName}
+          </h1>
         </div>
 
         {/* Navigation */}
@@ -77,8 +101,10 @@ export default function Layout({ children }) {
       )}
 
       <div className={`fixed inset-y-0 left-0 z-40 w-64 bg-white transform transition-transform duration-300 ease-in-out md:hidden ${sidebarOpen ? 'translate-x-0' : '-translate-x-full'}`}>
-        <div className="h-20 flex items-center justify-center border-b border-primary-light">
-          <h1 className="text-2xl font-bold text-primary">मेसफ्लो</h1>
+        <div className="h-20 flex items-center justify-center border-b border-[#E8F3EF] px-4">
+          <h1 className="text-xl font-bold text-[#0F4C3A] text-center truncate">
+            {messName || (isMarathi ? "मेसफ्लो" : "MessFlow")}
+          </h1>
         </div>
         <nav className="flex-1 px-4 py-6 space-y-1">
           {navigation.map((item) => {
@@ -90,11 +116,11 @@ export default function Layout({ children }) {
                 onClick={() => setSidebarOpen(false)}
                 className={`flex items-center px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
                   isActive
-                    ? "bg-primary-light text-primary"
-                    : "text-brand-charcoal hover:bg-gray-50"
+                    ? "bg-[#E8F3EF] text-[#0F4C3A]"
+                    : "text-[#2E2E2E] hover:bg-gray-50 hover:text-[#0F4C3A]"
                 }`}
               >
-                <span className={`material-icons-outlined mr-3 text-xl ${isActive ? 'text-primary' : 'text-gray-400'}`}>
+                <span className={`material-icons-outlined mr-3 text-xl ${isActive ? 'text-[#0F4C3A]' : 'text-gray-400'}`}>
                   {item.icon}
                 </span>
                 {isMarathi ? item.nameMr : item.nameEn}
