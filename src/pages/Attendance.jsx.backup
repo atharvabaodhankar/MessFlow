@@ -131,12 +131,7 @@ export default function Attendance() {
       const attendanceSnapshot = await getDocs(attendanceQuery);
       const attendanceMap = {};
       attendanceSnapshot.docs.forEach(doc => {
-        const data = doc.data();
-        const mealType = data.mealType || 'any';
-        const key = `${data.customerId}_${mealType}`;
-        attendanceMap[key] = true;
-        // Also track if customer has ANY attendance today (for 1-meal plan validation)
-        attendanceMap[data.customerId] = true;
+        attendanceMap[doc.data().customerId] = true;
       });
       setAttendanceToday(attendanceMap);
 
@@ -147,26 +142,15 @@ export default function Attendance() {
     }
   }
 
-  async function markAttendance(customerId, mealType) {
+  async function markAttendance(customerId) {
     try {
-      // Check if already marked for this specific meal
-      const attendanceKey = `${customerId}_${mealType}`;
-      if (attendanceToday[attendanceKey]) {
-        alert(isMarathi ? `या ग्राहकाची ${mealType === 'lunch' ? 'दुपारची' : 'रात्रीची'} उपस्थिती आधीच नोंदवली आहे!` : `Attendance already marked for ${mealType}!`);
-        return;
-      }
+      if (attendanceToday[customerId]) return;
 
       const customerRef = doc(db, "customers", customerId);
       const customerSnap = await getDoc(customerRef);
       
       if (customerSnap.exists()) {
         const customerData = customerSnap.data();
-        
-        // For 1-meal plans, check if they've already attended ANY meal today
-        if (customerData.mealsPerDay === 1 && attendanceToday[customerId]) {
-          alert(isMarathi ? "हा ग्राहक 1 टाइम प्लॅनवर आहे आणि आजची उपस्थिती आधीच नोंदवली आहे!" : "This customer has a 1-meal plan and has already attended today!");
-          return;
-        }
         
         // Check Validity
         const todayDate = new Date(today);
@@ -182,12 +166,11 @@ export default function Attendance() {
           return;
         }
 
-        // Mark Attendance with meal type
+        // Mark Attendance
         await addDoc(collection(db, "attendance"), {
           messId: currentUser.uid,
           customerId: customerId,
           date: today,
-          mealType: mealType,
           timestamp: Timestamp.now(),
           method: "manual"
         });
@@ -198,11 +181,7 @@ export default function Attendance() {
         });
 
         // Update local state
-        setAttendanceToday(prev => ({ 
-          ...prev, 
-          [attendanceKey]: true,
-          [customerId]: true
-        }));
+        setAttendanceToday(prev => ({ ...prev, [customerId]: true }));
         
         // Update customer list locally to reflect new meal count
         setCustomers(prev => prev.map(c => {
@@ -259,16 +238,7 @@ export default function Attendance() {
 
           <ul role="list" className="divide-y divide-gray-200">
             {filteredCustomers.map((customer) => {
-              const lunchKey = `${customer.id}_lunch`;
-              const dinnerKey = `${customer.id}_dinner`;
-              const hasLunchAttendance = attendanceToday[lunchKey];
-              const hasDinnerAttendance = attendanceToday[dinnerKey];
-              const hasAnyAttendanceToday = attendanceToday[customer.id];
-              
-              // For 1-meal plans: disable the other meal button if one is already marked
-              const isLunchDisabled = customer.mealsPerDay === 1 && hasAnyAttendanceToday && !hasLunchAttendance;
-              const isDinnerDisabled = customer.mealsPerDay === 1 && hasAnyAttendanceToday && !hasDinnerAttendance;
-              
+              const isPresent = attendanceToday[customer.id];
               return (
                 <li key={customer.id}>
                   <div className="px-4 py-4 flex items-center sm:px-6">
@@ -312,54 +282,21 @@ export default function Attendance() {
                               </span>
                             </div>
                           )}
-                          {customer.mealsPerDay && (
-                            <div className="ml-2 flex items-center">
-                              <span className="text-xs px-2 py-0.5 rounded-full bg-purple-100 text-purple-800">
-                                {customer.mealsPerDay === 1 ? "1 टाइम" : "2 टाइम"}
-                              </span>
-                            </div>
-                          )}
                         </div>
                       </div>
                     </div>
-                    <div className="ml-5 flex-shrink-0 flex gap-2">
-                      {/* Lunch Button */}
-                      {hasLunchAttendance ? (
-                        <div className="flex items-center text-green-600 px-3 py-2">
-                          <CheckCircleIcon className="h-5 w-5 mr-1" />
-                          <span className="text-sm font-medium">🍛 दुपार</span>
+                    <div className="ml-5 flex-shrink-0">
+                      {isPresent ? (
+                        <div className="flex items-center text-green-600">
+                          <CheckCircleIcon className="h-6 w-6 mr-1" />
+                          <span className="text-sm font-medium">हजर</span>
                         </div>
                       ) : (
                         <button
-                          onClick={() => markAttendance(customer.id, 'lunch')}
-                          disabled={isLunchDisabled}
-                          className={`inline-flex items-center rounded-xl border px-3 py-2 text-sm font-medium leading-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0F4C3A] focus:ring-offset-2 transition-colors ${
-                            isLunchDisabled
-                              ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
-                              : 'border-transparent bg-[#0F4C3A] text-white hover:bg-[#073327]'
-                          }`}
+                          onClick={() => markAttendance(customer.id)}
+                          className="inline-flex items-center rounded-xl border border-transparent bg-[#0F4C3A] px-3 py-2 text-sm font-medium leading-4 text-white shadow-sm hover:bg-[#073327] focus:outline-none focus:ring-2 focus:ring-[#0F4C3A] focus:ring-offset-2 transition-colors"
                         >
-                          🍛 दुपार
-                        </button>
-                      )}
-                      
-                      {/* Dinner Button */}
-                      {hasDinnerAttendance ? (
-                        <div className="flex items-center text-green-600 px-3 py-2">
-                          <CheckCircleIcon className="h-5 w-5 mr-1" />
-                          <span className="text-sm font-medium">🍽️ रात्री</span>
-                        </div>
-                      ) : (
-                        <button
-                          onClick={() => markAttendance(customer.id, 'dinner')}
-                          disabled={isDinnerDisabled}
-                          className={`inline-flex items-center rounded-xl border px-3 py-2 text-sm font-medium leading-4 shadow-sm focus:outline-none focus:ring-2 focus:ring-[#0F4C3A] focus:ring-offset-2 transition-colors ${
-                            isDinnerDisabled
-                              ? 'border-gray-300 bg-gray-100 text-gray-400 cursor-not-allowed'
-                              : 'border-transparent bg-[#0F4C3A] text-white hover:bg-[#073327]'
-                          }`}
-                        >
-                          🍽️ रात्री
+                          हजर करा
                         </button>
                       )}
                     </div>

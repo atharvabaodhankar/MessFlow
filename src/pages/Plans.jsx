@@ -27,6 +27,7 @@ export default function Plans() {
   const [isUnlimited, setIsUnlimited] = useState(false);
   const [validityDays, setValidityDays] = useState("");
   const [description, setDescription] = useState("");
+  const [mealsPerDay, setMealsPerDay] = useState("2");
 
   useEffect(() => {
     if (currentUser) {
@@ -60,6 +61,7 @@ export default function Plans() {
         totalMeals: Number(totalMeals) || 0,
         validityDays: Number(validityDays) || 30,
         description,
+        mealsPerDay: Number(mealsPerDay) || 2,
         createdAt: Timestamp.now()
       });
 
@@ -89,6 +91,7 @@ export default function Plans() {
     setIsUnlimited(false);
     setValidityDays("");
     setDescription("");
+    setMealsPerDay("2");
   }
 
   return (
@@ -125,6 +128,9 @@ export default function Plans() {
                 <p className="text-sm font-medium text-gray-900">{plan.name}</p>
                 <p className="truncate text-sm text-gray-500">₹{plan.price}</p>
                 <div className="flex items-center space-x-2 text-xs text-gray-500 mt-1">
+                  <span className="bg-purple-100 text-purple-800 px-2 py-0.5 rounded-full">
+                    {plan.mealsPerDay === 1 ? "1 टाइम" : plan.mealsPerDay === 2 ? "2 टाइम" : "N/A"}
+                  </span>
                   <span className="bg-green-100 text-green-800 px-2 py-0.5 rounded-full">
                     {plan.totalMeals ? `${plan.totalMeals} जेवण (Meals)` : "अमर्यादित (Unlimited)"}
                   </span>
@@ -198,7 +204,26 @@ export default function Plans() {
                         placeholder="0.00"
                       />
                     </div>
-                    </div>
+                  </div>
+
+                  <div>
+                    <label htmlFor="mealsPerDay" className="block text-sm font-medium text-gray-700">
+                      जेवणाचे प्रकार (Meals Per Day)
+                    </label>
+                    <select
+                      id="mealsPerDay"
+                      name="mealsPerDay"
+                      value={mealsPerDay}
+                      onChange={(e) => setMealsPerDay(e.target.value)}
+                      className="mt-1 block w-full rounded-xl border-gray-300 shadow-sm focus:border-[#0F4C3A] focus:ring-[#0F4C3A] sm:text-sm border p-2"
+                    >
+                      <option value="1">1 टाइम जेवण (Lunch OR Dinner)</option>
+                      <option value="2">2 टाइम जेवण (Lunch AND Dinner)</option>
+                    </select>
+                    <p className="mt-1 text-xs text-gray-500">
+                      1 टाइम = दुपार किंवा रात्री | 2 टाइम = दुपार आणि रात्री
+                    </p>
+                  </div>
 
                   <div className="grid grid-cols-2 gap-4">
                       <div>

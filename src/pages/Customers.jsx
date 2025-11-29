@@ -114,7 +114,8 @@ export default function Customers() {
         mealsConsumed: Number(mealsConsumed) || 0,
         customerNumber: Number(customerNumber),
         amountPaid: Number(amountPaid) || 0,
-        remainingAmount: (selectedPlan ? selectedPlan.price : 0) - (Number(amountPaid) || 0)
+        remainingAmount: (selectedPlan ? selectedPlan.price : 0) - (Number(amountPaid) || 0),
+        mealsPerDay: selectedPlan ? (selectedPlan.mealsPerDay || 2) : 2
       };
 
       if (editingCustomer) {
