@@ -227,38 +227,38 @@ export default function Customers() {
       <div className="mt-8 flex flex-col">
         <div className="-my-2 -mx-4 overflow-x-auto sm:-mx-6 lg:-mx-8">
           <div className="inline-block min-w-full py-2 align-middle md:px-6 lg:px-8">
-            <div className="overflow-hidden shadow ring-1 ring-black ring-opacity-5 md:rounded-lg">
-              <table className="min-w-full divide-y divide-gray-300">
-                <thead className="bg-gray-50">
+            <div className="overflow-hidden shadow-xl md:rounded-2xl bg-white">
+              <table className="min-w-full divide-y divide-gray-200">
+                <thead className="bg-[#F9FAFB]">
                   <tr>
-                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                    <th scope="col" className="py-4 pl-4 pr-3 text-left text-xs uppercase tracking-wider font-bold text-gray-500 sm:pl-6">
                       #
                     </th>
-                    <th scope="col" className="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">
+                    <th scope="col" className="py-4 pl-4 pr-3 text-left text-xs uppercase tracking-wider font-bold text-gray-500 sm:pl-6">
                       नाव
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-4 text-left text-xs uppercase tracking-wider font-bold text-gray-500">
                       मोबाईल
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-4 text-left text-xs uppercase tracking-wider font-bold text-gray-500">
                       प्लॅन
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      सुरुवात तारीख
+                    <th scope="col" className="px-3 py-4 text-left text-xs uppercase tracking-wider font-bold text-gray-500">
+                      सुरुवात
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      शेवटची तारीख
+                    <th scope="col" className="px-3 py-4 text-left text-xs uppercase tracking-wider font-bold text-gray-500">
+                      शेवट
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-4 text-left text-xs uppercase tracking-wider font-bold text-gray-500">
                       पेमेंट
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
+                    <th scope="col" className="px-3 py-4 text-left text-xs uppercase tracking-wider font-bold text-gray-500">
                       स्थिती
                     </th>
-                    <th scope="col" className="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">
-                      जेवण बाकी (Meals Left)
+                    <th scope="col" className="px-3 py-4 text-left text-xs uppercase tracking-wider font-bold text-gray-500">
+                      जेवण बाकी
                     </th>
-                    <th scope="col" className="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                    <th scope="col" className="relative py-4 pl-3 pr-4 sm:pr-6">
                       <span className="sr-only">Actions</span>
                     </th>
                   </tr>
@@ -281,11 +281,11 @@ export default function Customers() {
                     const mealsLeft = person.totalMeals > 0 ? person.totalMeals - (person.mealsConsumed || 0) : null;
                     
                     return (
-                    <tr key={person.id}>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-bold text-gray-900 sm:pl-6">
+                    <tr key={person.id} className="hover:bg-[#F5FBF9] transition-colors duration-200">
+                      <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm font-bold text-gray-900 sm:pl-6">
                         {person.customerNumber || "-"}
                       </td>
-                      <td className="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                      <td className="whitespace-nowrap py-5 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
                         {isMarathi ? (person.nameMarathi || person.name) : person.name}
                         {isMarathi && person.nameMarathi && person.nameMarathi !== person.name && (
                           <span className="block text-xs text-gray-400">{person.name}</span>
